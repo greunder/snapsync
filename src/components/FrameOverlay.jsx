@@ -182,8 +182,227 @@ export const StPatrickCoins = ({ className }) => (
   </svg>
 );
 
+export const HalloweenPumpkins = ({ className }) => (
+  <svg viewBox="0 0 100 60" className={className} xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="50" cy="35" rx="16" ry="14" fill="#e05a00" stroke="#111" strokeWidth="1" />
+    <ellipse cx="50" cy="35" rx="10" ry="14" fill="#e05a00" stroke="#111" strokeWidth="0.5" />
+    <ellipse cx="38" cy="38" rx="12" ry="11" fill="#e05a00" stroke="#111" strokeWidth="1" />
+    <ellipse cx="62" cy="38" rx="12" ry="11" fill="#e05a00" stroke="#111" strokeWidth="1" />
+    
+    <path d="M 50,21 Q 48,15 44,17" stroke="#336633" strokeWidth="2.5" fill="none" />
+    <path d="M 38,27 Q 36,22 33,23" stroke="#336633" strokeWidth="2" fill="none" />
+    <path d="M 62,27 Q 60,22 57,23" stroke="#336633" strokeWidth="2" fill="none" />
+
+    <polygon points="45,30 47,33 43,33" fill="#111" />
+    <polygon points="55,30 57,33 53,33" fill="#111" />
+    <path d="M 45,40 Q 50,45 55,40" stroke="#111" strokeWidth="1.5" fill="none" />
+  </svg>
+);
+
+export const HollyLeavesCorners = ({ className }) => (
+  <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
+    <g transform="translate(14, 14)">
+      <path d="M0,0 Q-10,-5 -5,-15 Q0,-10 0,0" fill="#1e3f20" />
+      <path d="M0,0 Q5,-10 15,-5 Q10,0 0,0" fill="#1e3f20" />
+      <circle cx="2" cy="-5" r="3.5" fill="#cc0000" />
+      <circle cx="-3" cy="-2" r="3" fill="#ff2222" />
+    </g>
+    <g transform="translate(86, 14) scale(-1, 1)">
+      <path d="M0,0 Q-10,-5 -5,-15 Q0,-10 0,0" fill="#1e3f20" />
+      <path d="M0,0 Q5,-10 15,-5 Q10,0 0,0" fill="#1e3f20" />
+      <circle cx="2" cy="-5" r="3.5" fill="#cc0000" />
+      <circle cx="-3" cy="-2" r="3" fill="#ff2222" />
+    </g>
+    <g transform="translate(14, 86) scale(1, -1)">
+      <path d="M0,0 Q-10,-5 -5,-15 Q0,-10 0,0" fill="#1e3f20" />
+      <path d="M0,0 Q5,-10 15,-5 Q10,0 0,0" fill="#1e3f20" />
+      <circle cx="2" cy="-5" r="3.5" fill="#cc0000" />
+      <circle cx="-3" cy="-2" r="3" fill="#ff2222" />
+    </g>
+    <g transform="translate(86, 86) scale(-1, -1)">
+      <path d="M0,0 Q-10,-5 -5,-15 Q0,-10 0,0" fill="#1e3f20" />
+      <path d="M0,0 Q5,-10 15,-5 Q10,0 0,0" fill="#1e3f20" />
+      <circle cx="2" cy="-5" r="3.5" fill="#cc0000" />
+      <circle cx="-3" cy="-2" r="3" fill="#ff2222" />
+    </g>
+  </svg>
+);
+
+export const ChristmasTreeSVG = ({ className }) => (
+  <svg viewBox="0 0 60 80" className={className} xmlns="http://www.w3.org/2000/svg">
+    <rect x="26" y="60" width="8" height="12" fill="#5c4008" />
+    <polygon points="30,10 10,40 50,40" fill="#006400" />
+    <polygon points="30,22 5,55 55,55" fill="#007f00" />
+    <polygon points="30,35 0,65 60,65" fill="#008f00" />
+    <circle cx="22" cy="30" r="2.5" fill="#ffd700" />
+    <circle cx="38" cy="35" r="2.5" fill="#ff2222" />
+    <circle cx="15" cy="50" r="3" fill="#3a86ff" />
+    <circle cx="45" cy="48" r="3" fill="#ffbe0b" />
+    <circle cx="30" cy="58" r="2.5" fill="#fb5607" />
+    <polygon points="30,2 32,7 37,7 33,10 35,15 30,12 25,15 27,10 23,7 28,7" fill="#ffd700" />
+  </svg>
+);
+
+export const BunnyEarsSVG = ({ className }) => (
+  <svg viewBox="0 0 80 60" className={className} xmlns="http://www.w3.org/2000/svg">
+    <path d="M 30,55 C 20,30 20,5 30,10 C 35,15 35,45 30,55" fill="#ffffff" stroke="#ffb7b2" strokeWidth="1.5" />
+    <path d="M 29,48 C 24,30 24,15 28,17 C 31,20 31,40 29,48" fill="#ffb7b2" />
+    
+    <path d="M 50,55 C 60,30 60,5 50,10 C 45,15 45,45 50,55" fill="#ffffff" stroke="#ffb7b2" strokeWidth="1.5" />
+    <path d="M 51,48 C 56,30 56,15 52,17 C 49,20 49,40 51,48" fill="#ffb7b2" />
+  </svg>
+);
+
+export const EasterBunnySVG = ({ className }) => (
+  <svg viewBox="0 0 60 70" className={className} xmlns="http://www.w3.org/2000/svg">
+    <circle cx="30" cy="48" r="16" fill="#fdfbf7" stroke="#e9ecef" strokeWidth="1" />
+    <circle cx="30" cy="24" r="11" fill="#fdfbf7" stroke="#e9ecef" strokeWidth="1" />
+    <ellipse cx="26" cy="10" rx="3.5" ry="9" transform="rotate(-10, 26, 10)" fill="#fdfbf7" stroke="#ffb7b2" strokeWidth="1" />
+    <ellipse cx="26" cy="10" rx="1.5" ry="6" transform="rotate(-10, 26, 10)" fill="#ffb7b2" />
+    <ellipse cx="34" cy="10" rx="3.5" ry="9" transform="rotate(10, 34, 10)" fill="#fdfbf7" stroke="#ffb7b2" strokeWidth="1" />
+    <ellipse cx="34" cy="10" rx="1.5" ry="6" transform="rotate(10, 34, 10)" fill="#ffb7b2" />
+    <circle cx="27" cy="22" r="1" fill="#111" />
+    <circle cx="33" cy="22" r="1" fill="#111" />
+    <polygon points="30,25 28.5,23.5 31.5,23.5" fill="#ffb7b2" />
+  </svg>
+);
+
+export const EasterEggsSVG = ({ className }) => (
+  <svg viewBox="0 0 80 60" className={className} xmlns="http://www.w3.org/2000/svg">
+    <path d="M 25,45 C 25,30 40,30 40,45 C 40,57 25,57 25,45" fill="#ffc6ff" stroke="#fff" strokeWidth="1" />
+    <path d="M 27,45 Q 32.5,42.5 38,45" stroke="#ffb703" strokeWidth="1" fill="none" />
+    <path d="M 45,48 C 45,35 60,35 60,48 C 60,59 45,59 45,48" fill="#b5e2fa" stroke="#fff" strokeWidth="1" />
+    <path d="M 47,48 Q 52.5,45.5 58,48" stroke="#ffd700" strokeWidth="1" fill="none" />
+  </svg>
+);
+
+export const CupcakeCandle = ({ className }) => (
+  <svg viewBox="0 0 60 70" className={className} xmlns="http://www.w3.org/2000/svg">
+    <polygon points="15,42 45,42 40,65 20,65" fill="#ffd166" stroke="#b38728" strokeWidth="1" />
+    <path d="M 10,42 C 10,30 25,25 30,30 C 35,25 50,30 50,42 Z" fill="#ffc6ff" />
+    <circle cx="30" cy="27" r="3" fill="#ff5e5e" />
+    <rect x="28" y="10" width="4" height="15" fill="#b5e2fa" />
+    <path d="M 30,0 C 28,6 32,6 30,0" fill="#ffd700" />
+  </svg>
+);
+
+export const PartyHatSVG = ({ className }) => (
+  <svg viewBox="0 0 50 60" className={className} xmlns="http://www.w3.org/2000/svg">
+    <polygon points="25,10 5,50 45,50" fill="#ffbe0b" stroke="#fff" strokeWidth="0.8" />
+    <path d="M 12,35 Q 25,32 38,35" stroke="#ff006e" strokeWidth="3.5" fill="none" />
+    <path d="M 8,43 Q 25,40 42,43" stroke="#3a86ff" strokeWidth="3.5" fill="none" />
+    <circle cx="25" cy="7" r="4.5" fill="#ff006e" />
+  </svg>
+);
+
+export const AnnivBalloons = ({ className }) => (
+  <svg viewBox="0 0 100 120" className={className} xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="pinkBalloon" cx="35%" cy="35%" r="65%">
+        <stop offset="0%" stopColor="#ffffff" />
+        <stop offset="35%" stopColor="#ffc6ff" />
+        <stop offset="85%" stopColor="#ff006e" />
+        <stop offset="100%" stopColor="#800037" />
+      </radialGradient>
+      <radialGradient id="blueBalloon" cx="35%" cy="35%" r="65%">
+        <stop offset="0%" stopColor="#ffffff" />
+        <stop offset="35%" stopColor="#b5e2fa" />
+        <stop offset="85%" stopColor="#3a86ff" />
+        <stop offset="100%" stopColor="#002166" />
+      </radialGradient>
+      <radialGradient id="yellowBalloon" cx="35%" cy="35%" r="65%">
+        <stop offset="0%" stopColor="#ffffff" />
+        <stop offset="35%" stopColor="#fff" />
+        <stop offset="80%" stopColor="#ffbe0b" />
+        <stop offset="100%" stopColor="#b38000" />
+      </radialGradient>
+    </defs>
+    <path d="M 30,65 Q 45,95 50,118" stroke="#dddddd" strokeWidth="1.2" fill="none" opacity="0.6" />
+    <path d="M 50,55 Q 50,95 50,118" stroke="#dddddd" strokeWidth="1.2" fill="none" opacity="0.6" />
+    <path d="M 70,65 Q 55,95 50,118" stroke="#dddddd" strokeWidth="1.2" fill="none" opacity="0.6" />
+    
+    <g filter="url(#balloonShadow)">
+      <ellipse cx="30" cy="60" rx="14" ry="19" transform="rotate(-15, 30, 60)" fill="url(#pinkBalloon)" />
+      <polygon points="30,79 27,83 33,83" fill="#ff006e" />
+    </g>
+    <g filter="url(#balloonShadow)">
+      <ellipse cx="70" cy="60" rx="14" ry="19" transform="rotate(15, 70, 60)" fill="url(#yellowBalloon)" />
+      <polygon points="70,79 67,83 73,83" fill="#ffbe0b" />
+    </g>
+    <g filter="url(#balloonShadow)">
+      <ellipse cx="50" cy="50" rx="16" ry="21" fill="url(#blueBalloon)" />
+      <polygon points="50,71 47,75 53,75" fill="#3a86ff" />
+    </g>
+  </svg>
+);
+
 export function FrameDecorations({ category, frameId }) {
   const isGala = frameId?.startsWith('gala') || frameId?.startsWith('corpo') || frameId?.startsWith('mariage');
+  
+  // Specific checks for the new 2026 templates
+  if (frameId === 'halloween-2026') {
+    return (
+      <div className="absolute inset-0 pointer-events-none z-25">
+        <div className="absolute inset-1.5 border-[2px] border-[#e05a00] rounded-xl opacity-90" />
+        <HalloweenSpiders className="absolute top-1 left-1 w-14 h-14" />
+        <HalloweenBats className="absolute top-[25%] right-1 w-10 h-8" />
+        <HalloweenBats className="absolute top-[45%] left-1.5 w-7 h-5 opacity-70" />
+        <HalloweenPumpkins className="absolute bottom-1 right-1 w-[60px] h-[40px] z-30" />
+      </div>
+    );
+  }
+
+  if (frameId === 'noel-2026') {
+    return (
+      <div className="absolute inset-0 pointer-events-none z-25">
+        <div className="absolute inset-1.5 border-[2px] border-[#ffd700]/30 rounded-xl opacity-80" />
+        {/* Floating gold reindeer and snowflakes on background */}
+        <span className="absolute top-[30%] left-[8%] text-[8px] text-[#ffd700] opacity-50">🦌</span>
+        <span className="absolute top-[50%] right-[8%] text-[8px] text-[#ffd700] opacity-50">🦌</span>
+        <span className="absolute top-[20%] right-[25%] text-[6px] text-[#ffd700] opacity-40">❄️</span>
+        <span className="absolute bottom-[30%] left-[25%] text-[6px] text-[#ffd700] opacity-40">❄️</span>
+        
+        {/* Holly corners on the inner photo frames */}
+        <HollyLeavesCorners className="absolute inset-[8%] w-[84%] h-[84%] z-20 opacity-90" />
+        
+        {/* Christmas Tree top right */}
+        <ChristmasTreeSVG className="absolute top-[4%] right-[4%] w-[45px] h-[55px] z-30" />
+      </div>
+    );
+  }
+
+  if (frameId === 'paques-2026') {
+    return (
+      <div className="absolute inset-0 pointer-events-none z-25">
+        <div className="absolute inset-1.5 border-[2px] border-[#80b3ff]/30 rounded-xl opacity-70" />
+        {/* Bunny ears peaking behind photo frame */}
+        <BunnyEarsSVG className="absolute top-[2%] left-1/2 transform -translate-x-1/2 w-14 h-10 z-0" />
+        {/* Easter eggs bottom left */}
+        <EasterEggsSVG className="absolute bottom-1.5 left-1 w-14 h-10 z-30" />
+        {/* Cute Easter bunny bottom right */}
+        <EasterBunnySVG className="absolute bottom-1.5 right-1 w-12 h-14 z-30" />
+      </div>
+    );
+  }
+
+  if (frameId === 'anniv-2026') {
+    return (
+      <div className="absolute inset-0 pointer-events-none z-25">
+        <div className="absolute inset-1.5 border-[2px] border-[#ffea00]/30 rounded-xl opacity-70" />
+        {/* Party hats top corners */}
+        <PartyHatSVG className="absolute top-1.5 left-1.5 w-8 h-10" />
+        <PartyHatSVG className="absolute top-1.5 right-1.5 w-8 h-10 transform scale-x-[-1]" />
+        
+        {/* Balloons bottom corners */}
+        <AnnivBalloons className="absolute bottom-1.5 left-1 w-12 h-16 z-30" />
+        <AnnivBalloons className="absolute bottom-1.5 right-1.5 w-12 h-16 z-30 transform scale-x-[-1]" />
+        
+        {/* Cupcake bottom right */}
+        <CupcakeCandle className="absolute bottom-1.5 right-2 w-9 h-11 z-35" />
+      </div>
+    );
+  }
+
   const isAnniversary = category === 'Anniversaire' || isGala;
   
   return (
@@ -255,6 +474,14 @@ export const getBgStyle = (bgType) => {
   const marblePattern = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cpath d='M0,50 Q50,40 80,70 T150,110 T200,90' fill='none' stroke='%23d1d5db' stroke-width='1.5' opacity='0.2'/%3E%3Cpath d='M50,200 Q90,150 120,180 T200,160' fill='none' stroke='%23d1d5db' stroke-width='1' opacity='0.15'/%3E%3C/svg%3E")`;
 
   switch(bgType) {
+    case 'orangeKraft':
+      return { backgroundColor: '#d07a3e', backgroundImage: paperPattern };
+    case 'ruby':
+      return { backgroundColor: '#7c0a1a', backgroundImage: chalkboardPattern };
+    case 'pastelGreen':
+      return { backgroundColor: '#bde0bb', backgroundImage: paperPattern };
+    case 'festivePurple':
+      return { backgroundColor: '#623fa2', backgroundImage: confettiPattern };
     case 'wood':
       return { backgroundColor: '#472d1a', backgroundImage: woodPattern };
     case 'greenWood':
@@ -276,6 +503,42 @@ export const getBgStyle = (bgType) => {
 
 // Thematic Frames list with TemplatesBooth procedural styling
 export const thematicFrames = [
+  { 
+    id: "halloween-2026", 
+    name: "Fête Épouvantable", 
+    category: "Halloween", 
+    emoji: "🎃", 
+    bgType: "orangeKraft",
+    cornerEmoji: "🕸️",
+    overlayText: "Joyeux Halloween 2026" 
+  },
+  { 
+    id: "noel-2026", 
+    name: "Esprit Festif", 
+    category: "Noël", 
+    emoji: "🎄", 
+    bgType: "ruby",
+    cornerEmoji: "❄️",
+    overlayText: "Noël Magique 2026" 
+  },
+  { 
+    id: "paques-2026", 
+    name: "Joyeuses Pâques", 
+    category: "Pâques", 
+    emoji: "🐰", 
+    bgType: "pastelGreen",
+    cornerEmoji: "🌸",
+    overlayText: "Chasse aux Œufs 2026" 
+  },
+  { 
+    id: "anniv-2026", 
+    name: "Joyeux Anniversaire", 
+    category: "Anniversaire", 
+    emoji: "🎂", 
+    bgType: "festivePurple",
+    cornerEmoji: "🎉",
+    overlayText: "Célébration d'Anniversaire 2026" 
+  },
   { 
     id: "halloween-1", 
     name: "Nuit d'horreur", 
@@ -509,12 +772,17 @@ function PhotoSlot({
   }, [isActive]);
 
   const isGala = frame?.id?.startsWith('gala') || frame?.id?.startsWith('corpo') || frame?.id?.startsWith('mariage');
-  const isAnniversary = frame?.category === 'Anniversaire' || isGala;
+  const isAnniversary = (frame?.category === 'Anniversaire' && frame?.id !== 'anniv-2026') || isGala;
   
   let slotBorderClass = "border-[4px] md:border-[6px] border-white bg-white";
   let slotBorderStyle = {};
   
-  if (isAnniversary) {
+  const isNew2026 = frame?.id === 'anniv-2026' || frame?.id === 'halloween-2026' || frame?.id === 'noel-2026' || frame?.id === 'paques-2026';
+
+  if (isNew2026) {
+    // Keep white borders for 2026 templates
+    slotBorderClass = "border-[4px] md:border-[6px] border-white bg-white";
+  } else if (isAnniversary) {
     slotBorderClass = "border-[3px] bg-zinc-950";
     slotBorderStyle = { borderColor: '#bf953f' };
   } else if (frame?.category === 'Halloween') {

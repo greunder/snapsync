@@ -287,13 +287,18 @@ export function generateFramedPhoto(videoElementOrPhotos, frame, customText, lay
         ctx.shadowOffsetY = 8;
 
         const isGala = frame.id?.startsWith('gala') || frame.id?.startsWith('corpo') || frame.id?.startsWith('mariage');
-        const isAnniversary = frame.category === 'Anniversaire' || isGala;
+        const isAnniversary = (frame.category === 'Anniversaire' && frame.id !== 'anniv-2026') || isGala;
         
         ctx.fillStyle = '#ffffff';
         let customBorder = false;
         let borderGradient = null;
 
-        if (isAnniversary) {
+        const isNew2026 = frame.id === 'anniv-2026' || frame.id === 'halloween-2026' || frame.id === 'noel-2026' || frame.id === 'paques-2026';
+
+        if (isNew2026) {
+          // Keep white borders for 2026 templates
+          customBorder = false;
+        } else if (isAnniversary) {
           borderGradient = ctx.createLinearGradient(x - borderThickness, y - borderThickness, x + slotWidth + borderThickness, y + slotHeight + borderThickness);
           borderGradient.addColorStop(0, '#bf953f');
           borderGradient.addColorStop(0.25, '#fcf6ba');
@@ -446,6 +451,62 @@ function drawThemedDecorations(ctx, width, height, frame) {
   const category = frame.category;
   const frameId = frame.id;
   const isGala = frameId?.startsWith('gala') || frameId?.startsWith('corpo') || frameId?.startsWith('mariage');
+
+  if (frameId === 'halloween-2026') {
+    ctx.save();
+    ctx.strokeStyle = '#e05a00';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(8, 8, width - 16, height - 16);
+    ctx.restore();
+
+    drawHalloweenWeb(ctx, 0, 0, 120);
+    drawHalloweenPumpkinsCanvas(ctx, width - 100, height - 120);
+    drawHalloweenBats(ctx, width - 100, height * 0.25);
+    drawHalloweenBats(ctx, 80, height * 0.45);
+    return;
+  }
+
+  if (frameId === 'noel-2026') {
+    ctx.save();
+    ctx.strokeStyle = 'rgba(255, 215, 0, 0.3)';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(8, 8, width - 16, height - 16);
+    ctx.restore();
+
+    drawNoelBackgroundDetails(ctx, width, height);
+    drawHollyLeavesCornersCanvas(ctx, width, height);
+    drawChristmasTreeCanvas(ctx, width - 120, 60);
+    return;
+  }
+
+  if (frameId === 'paques-2026') {
+    ctx.save();
+    ctx.strokeStyle = 'rgba(128, 179, 255, 0.3)';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(8, 8, width - 16, height - 16);
+    ctx.restore();
+
+    drawBunnyEarsCanvas(ctx, width / 2, 120);
+    drawEasterEggsCanvas(ctx, 80, height - 120);
+    drawEasterBunnyCanvas(ctx, width - 80, height - 140);
+    return;
+  }
+
+  if (frameId === 'anniv-2026') {
+    ctx.save();
+    ctx.strokeStyle = 'rgba(255, 234, 0, 0.3)';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(8, 8, width - 16, height - 16);
+    ctx.restore();
+
+    drawPartyHatCanvas(ctx, 60, 60);
+    drawPartyHatCanvas(ctx, width - 60, 60, true);
+    drawAnnivBalloonsCanvas(ctx, 80, height - 180);
+    drawAnnivBalloonsCanvas(ctx, width - 80, height - 180, true);
+    drawCupcakeCanvas(ctx, width - 120, height - 120);
+    return;
+  }
+
   const isAnniversary = category === 'Anniversaire' || isGala;
 
   // Helper to draw gold linear gradient border
@@ -1010,6 +1071,453 @@ function drawEasterDecoCanvas(ctx, cx, cy, flip = false) {
   ctx.quadraticCurveTo(0, 2, 12, 6);
   ctx.stroke();
   ctx.restore();
+
+  ctx.restore();
+}
+
+// 2026 Specific Template Canvas Helpers
+function drawHalloweenPumpkinsCanvas(ctx, cx, cy) {
+  ctx.save();
+  ctx.translate(cx, cy);
+
+  const drawSinglePumpkin = (x, y, rx, ry, scale) => {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.scale(scale, scale);
+
+    // Stem
+    ctx.strokeStyle = '#336633';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(0, -ry + 2);
+    ctx.quadraticCurveTo(-5, -ry - 10, -10, -ry - 8);
+    ctx.stroke();
+
+    // Body
+    ctx.fillStyle = '#e05a00';
+    ctx.strokeStyle = '#111111';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, rx, ry, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.ellipse(0, 0, rx * 0.6, ry, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    // Eyes
+    ctx.fillStyle = '#111111';
+    ctx.beginPath();
+    ctx.moveTo(-rx * 0.35, -ry * 0.2);
+    ctx.lineTo(-rx * 0.15, -ry * 0.2);
+    ctx.lineTo(-rx * 0.25, -ry * 0.4);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.moveTo(rx * 0.15, -ry * 0.2);
+    ctx.lineTo(rx * 0.35, -ry * 0.2);
+    ctx.lineTo(rx * 0.25, -ry * 0.4);
+    ctx.closePath();
+    ctx.fill();
+
+    // Mouth
+    ctx.strokeStyle = '#111111';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(-rx * 0.35, ry * 0.2);
+    ctx.quadraticCurveTo(0, ry * 0.5, rx * 0.35, ry * 0.2);
+    ctx.stroke();
+
+    ctx.restore();
+  };
+
+  drawSinglePumpkin(-18, 5, 14, 13, 0.85);
+  drawSinglePumpkin(18, 5, 14, 13, 0.85);
+  drawSinglePumpkin(0, 0, 18, 16, 1.0);
+
+  ctx.restore();
+}
+
+function drawNoelBackgroundDetails(ctx, w, h) {
+  ctx.save();
+  ctx.fillStyle = '#ffd700';
+  ctx.font = '16px serif';
+
+  ctx.globalAlpha = 0.4;
+  ctx.fillText('🦌', w * 0.08, h * 0.3);
+  ctx.fillText('🦌', w * 0.92, h * 0.5);
+  ctx.fillText('❄️', w * 0.25, h * 0.18);
+  ctx.fillText('❄️', w * 0.75, h * 0.8);
+  ctx.restore();
+}
+
+function drawHollyLeavesCornersCanvas(ctx, w, h) {
+  ctx.save();
+  
+  const drawHollyCorner = (x, y, flipX, flipY) => {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.scale(flipX ? -1 : 1, flipY ? -1 : 1);
+
+    // Leaves
+    ctx.fillStyle = '#1e3f20';
+    ctx.strokeStyle = '#0f2010';
+    ctx.lineWidth = 1;
+
+    const drawLeaf = (angle) => {
+      ctx.save();
+      ctx.rotate(angle);
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.quadraticCurveTo(-10, -5, -8, -18);
+      ctx.quadraticCurveTo(0, -10, 0, 0);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+    };
+
+    drawLeaf(-Math.PI / 6);
+    drawLeaf(Math.PI / 6);
+    drawLeaf(0);
+
+    // Berries
+    ctx.fillStyle = '#cc0000';
+    ctx.beginPath(); ctx.arc(3, -5, 3, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#ff2222';
+    ctx.beginPath(); ctx.arc(-3, -2, 2.5, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#990000';
+    ctx.beginPath(); ctx.arc(0, -8, 2.5, 0, Math.PI*2); ctx.fill();
+
+    ctx.restore();
+  };
+
+  const inset = 96;
+  drawHollyCorner(inset, inset, false, false);
+  drawHollyCorner(w - inset, inset, true, false);
+  drawHollyCorner(inset, h - inset - 120, false, true);
+  drawHollyCorner(w - inset, h - inset - 120, true, true);
+
+  ctx.restore();
+}
+
+function drawChristmasTreeCanvas(ctx, cx, cy) {
+  ctx.save();
+  ctx.translate(cx, cy);
+
+  ctx.fillStyle = '#5c4008';
+  ctx.fillRect(-4, 20, 8, 12);
+
+  ctx.fillStyle = '#006400';
+  ctx.beginPath(); ctx.moveTo(0, -30); ctx.lineTo(-20, 3); ctx.lineTo(20, 3); ctx.closePath(); ctx.fill();
+  
+  ctx.fillStyle = '#007f00';
+  ctx.beginPath(); ctx.moveTo(0, -15); ctx.lineTo(-26, 15); ctx.lineTo(26, 15); ctx.closePath(); ctx.fill();
+  
+  ctx.fillStyle = '#008f00';
+  ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(-32, 25); ctx.lineTo(32, 25); ctx.closePath(); ctx.fill();
+
+  ctx.fillStyle = '#ffd700'; ctx.beginPath(); ctx.arc(-10, 8, 3, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#ff2222'; ctx.beginPath(); ctx.arc(10, 11, 3, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#3a86ff'; ctx.beginPath(); ctx.arc(-18, 20, 3.5, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#ffbe0b'; ctx.beginPath(); ctx.arc(18, 18, 3.5, 0, Math.PI*2); ctx.fill();
+
+  ctx.fillStyle = '#ffd700';
+  const drawStarLocal = (sx, sy, spikes, outerRadius, innerRadius) => {
+    let rot = Math.PI / 2 * 3;
+    let x = sx;
+    let y = sy;
+    let step = Math.PI / spikes;
+
+    ctx.beginPath();
+    ctx.moveTo(sx, sy - outerRadius);
+    for (let i = 0; i < spikes; i++) {
+      x = sx + Math.cos(rot) * outerRadius;
+      y = sy + Math.sin(rot) * outerRadius;
+      ctx.lineTo(x, y);
+      rot += step;
+
+      x = sx + Math.cos(rot) * innerRadius;
+      y = sy + Math.sin(rot) * innerRadius;
+      ctx.lineTo(x, y);
+      rot += step;
+    }
+    ctx.closePath();
+    ctx.fill();
+  };
+  drawStarLocal(0, -34, 5, 8, 3);
+
+  ctx.restore();
+}
+
+function drawBunnyEarsCanvas(ctx, cx, cy) {
+  ctx.save();
+  ctx.translate(cx, cy);
+
+  const drawEar = (ex, ey, rx, ry, rot) => {
+    ctx.save();
+    ctx.translate(ex, ey);
+    ctx.rotate(rot);
+
+    ctx.fillStyle = '#ffffff';
+    ctx.strokeStyle = '#ffb7b2';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, rx, ry, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = '#ffb7b2';
+    ctx.beginPath();
+    ctx.ellipse(0, 0, rx * 0.5, ry * 0.7, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+  };
+
+  drawEar(-20, 0, 12, 32, -Math.PI / 18);
+  drawEar(20, 0, 12, 32, Math.PI / 18);
+
+  ctx.restore();
+}
+
+function drawEasterEggsCanvas(ctx, cx, cy) {
+  ctx.save();
+  ctx.translate(cx, cy);
+
+  const drawEggSingle = (ex, ey, rx, ry, rot, col1, col2) => {
+    ctx.save();
+    ctx.translate(ex, ey);
+    ctx.rotate(rot);
+
+    ctx.fillStyle = col1;
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, rx, ry, 0, 0, Math.PI*2);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.strokeStyle = col2;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(-rx*0.8, -ry*0.2);
+    ctx.quadraticCurveTo(0, -ry*0.5, rx*0.8, -ry*0.2);
+    ctx.moveTo(-rx*0.8, ry*0.2);
+    ctx.quadraticCurveTo(0, ry*0.5, rx*0.8, ry*0.2);
+    ctx.stroke();
+
+    ctx.restore();
+  };
+
+  drawEggSingle(-15, 15, 18, 24, -Math.PI/12, '#ffc6ff', '#ffb703');
+  drawEggSingle(15, 20, 18, 24, Math.PI/12, '#b5e2fa', '#ffd700');
+
+  ctx.restore();
+}
+
+function drawEasterBunnyCanvas(ctx, cx, cy) {
+  ctx.save();
+  ctx.translate(cx, cy);
+
+  // Ears
+  ctx.fillStyle = '#fdfbf7';
+  ctx.strokeStyle = '#ffb7b2';
+  ctx.lineWidth = 1.5;
+  
+  ctx.save();
+  ctx.translate(-7, -30);
+  ctx.rotate(-Math.PI / 12);
+  ctx.beginPath(); ctx.ellipse(0, 0, 5, 16, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = '#ffb7b2';
+  ctx.beginPath(); ctx.ellipse(0, 0, 2, 10, 0, 0, Math.PI*2); ctx.fill();
+  ctx.restore();
+
+  ctx.fillStyle = '#fdfbf7';
+  ctx.save();
+  ctx.translate(7, -30);
+  ctx.rotate(Math.PI / 12);
+  ctx.beginPath(); ctx.ellipse(0, 0, 5, 16, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = '#ffb7b2';
+  ctx.beginPath(); ctx.ellipse(0, 0, 2, 10, 0, 0, Math.PI*2); ctx.fill();
+  ctx.restore();
+
+  // Body
+  ctx.fillStyle = '#fdfbf7';
+  ctx.strokeStyle = '#e9ecef';
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.arc(0, 10, 22, 0, Math.PI*2);
+  ctx.fill();
+  ctx.stroke();
+
+  // Head
+  ctx.beginPath();
+  ctx.arc(0, -16, 15, 0, Math.PI*2);
+  ctx.fill();
+  ctx.stroke();
+
+  // Eyes
+  ctx.fillStyle = '#111111';
+  ctx.beginPath(); ctx.arc(-4, -18, 1.5, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(4, -18, 1.5, 0, Math.PI*2); ctx.fill();
+
+  // Nose
+  ctx.fillStyle = '#ffb7b2';
+  ctx.beginPath();
+  ctx.moveTo(0, -14);
+  ctx.lineTo(-2, -16);
+  ctx.lineTo(2, -16);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.restore();
+}
+
+function drawPartyHatCanvas(ctx, cx, cy, flip = false) {
+  ctx.save();
+  ctx.translate(cx, cy);
+  if (flip) {
+    ctx.scale(-1, 1);
+  }
+
+  // Cone
+  ctx.fillStyle = '#ffbe0b';
+  ctx.strokeStyle = '#ffffff';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(0, -30);
+  ctx.lineTo(-18, 18);
+  ctx.lineTo(18, 18);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+
+  // Stripes
+  ctx.strokeStyle = '#ff006e';
+  ctx.lineWidth = 3.5;
+  ctx.beginPath();
+  ctx.moveTo(-10, 3);
+  ctx.quadraticCurveTo(0, 0, 10, 3);
+  ctx.stroke();
+
+  ctx.strokeStyle = '#3a86ff';
+  ctx.lineWidth = 3.5;
+  ctx.beginPath();
+  ctx.moveTo(-14, 10);
+  ctx.quadraticCurveTo(0, 7, 14, 10);
+  ctx.stroke();
+
+  // Pom pom
+  ctx.fillStyle = '#ff006e';
+  ctx.beginPath();
+  ctx.arc(0, -30, 5, 0, Math.PI*2);
+  ctx.fill();
+
+  ctx.restore();
+}
+
+function drawAnnivBalloonsCanvas(ctx, cx, cy, flip = false) {
+  ctx.save();
+  if (flip) {
+    ctx.translate(cx, cy);
+    ctx.scale(-1, 1);
+    ctx.translate(-cx, -cy);
+  }
+
+  ctx.strokeStyle = '#dddddd';
+  ctx.lineWidth = 1.5;
+  ctx.globalAlpha = 0.5;
+  ctx.beginPath(); ctx.moveTo(cx - 20, cy + 15); ctx.quadraticCurveTo(cx - 5, cy + 60, cx, cy + 100); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx, cy + 8); ctx.quadraticCurveTo(cx, cy + 60, cx, cy + 100); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx + 20, cy + 15); ctx.quadraticCurveTo(cx + 5, cy + 60, cx, cy + 100); ctx.stroke();
+
+  const drawSingleBalloon = (bx, by, rx, ry, angle, col1, col2, col3, col4) => {
+    ctx.save();
+    ctx.translate(bx, by);
+    ctx.rotate(angle);
+    
+    ctx.shadowColor = 'rgba(0,0,0,0.3)';
+    ctx.shadowBlur = 8;
+    ctx.shadowOffsetX = 1;
+    ctx.shadowOffsetY = 3;
+
+    const balloonGrad = ctx.createRadialGradient(-rx*0.3, -ry*0.3, rx*0.1, 0, 0, rx);
+    balloonGrad.addColorStop(0, col1);
+    balloonGrad.addColorStop(0.35, col2);
+    balloonGrad.addColorStop(0.85, col3);
+    balloonGrad.addColorStop(1, col4);
+
+    ctx.fillStyle = balloonGrad;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, rx, ry, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = col3;
+    ctx.beginPath();
+    ctx.moveTo(0, ry - 1);
+    ctx.lineTo(-4, ry + 4);
+    ctx.lineTo(4, ry + 4);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.restore();
+  };
+
+  ctx.globalAlpha = 1.0;
+  drawSingleBalloon(cx - 20, cy + 10, 20, 26, -Math.PI / 12, '#ffffff', '#ffc6ff', '#ff006e', '#800037');
+  drawSingleBalloon(cx + 20, cy + 10, 20, 26, Math.PI / 12, '#ffffff', '#ffffff', '#ffbe0b', '#b38000');
+  drawSingleBalloon(cx, cy, 23, 30, 0, '#ffffff', '#b5e2fa', '#3a86ff', '#002166');
+
+  ctx.restore();
+}
+
+function drawCupcakeCanvas(ctx, cx, cy) {
+  ctx.save();
+  ctx.translate(cx, cy);
+
+  // Cupcake cup
+  ctx.fillStyle = '#ffd166';
+  ctx.strokeStyle = '#b38728';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(-10, 8);
+  ctx.lineTo(10, 8);
+  ctx.lineTo(7, 24);
+  ctx.lineTo(-7, 24);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+
+  // Frosting
+  ctx.fillStyle = '#ffc6ff';
+  ctx.beginPath();
+  ctx.moveTo(-14, 8);
+  ctx.quadraticCurveTo(-14, 0, 0, 2);
+  ctx.quadraticCurveTo(14, 0, 14, 8);
+  ctx.closePath();
+  ctx.fill();
+
+  // Cherry on top
+  ctx.fillStyle = '#ff5e5e';
+  ctx.beginPath();
+  ctx.arc(0, -1, 3.5, 0, Math.PI*2);
+  ctx.fill();
+
+  // Candle
+  ctx.fillStyle = '#b5e2fa';
+  ctx.fillRect(-1.5, -15, 3, 14);
+
+  // Flame
+  ctx.fillStyle = '#ffd700';
+  ctx.beginPath();
+  ctx.moveTo(0, -22);
+  ctx.quadraticCurveTo(-2, -18, 0, -15);
+  ctx.quadraticCurveTo(2, -18, 0, -22);
+  ctx.fill();
 
   ctx.restore();
 }
