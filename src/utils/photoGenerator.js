@@ -137,6 +137,79 @@ function drawProceduralBackground(ctx, width, height, bgType) {
     }
     ctx.globalAlpha = 1.0;
   }
+  // Orange Kraft (Halloween 2026)
+  else if (bgType === 'orangeKraft') {
+    ctx.fillStyle = '#d07a3e';
+    ctx.fillRect(0, 0, width, height);
+
+    ctx.fillStyle = '#b7652c';
+    ctx.globalAlpha = 0.3;
+    for (let i = 0; i < 4000; i++) {
+      const rx = Math.random() * width;
+      const ry = Math.random() * height;
+      const rSize = Math.random() * 2 + 1;
+      ctx.fillRect(rx, ry, rSize, rSize);
+    }
+    ctx.globalAlpha = 1.0;
+  }
+  // Ruby chalkboard (Noel 2026)
+  else if (bgType === 'ruby') {
+    ctx.fillStyle = '#7c0a1a';
+    ctx.fillRect(0, 0, width, height);
+
+    ctx.fillStyle = '#ffffff';
+    ctx.globalAlpha = 0.03;
+    for (let i = 0; i < 20; i++) {
+      ctx.beginPath();
+      const rx = Math.random() * width;
+      const ry = Math.random() * height;
+      const rRadius = Math.random() * 150 + 50;
+      ctx.arc(rx, ry, rRadius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.fillStyle = '#000000';
+    ctx.globalAlpha = 0.12;
+    for (let i = 0; i < 3000; i++) {
+      const rx = Math.random() * width;
+      const ry = Math.random() * height;
+      ctx.fillRect(rx, ry, 1, 1);
+    }
+    ctx.globalAlpha = 1.0;
+  }
+  // Pastel Green Kraft (Easter 2026)
+  else if (bgType === 'pastelGreen') {
+    ctx.fillStyle = '#bde0bb';
+    ctx.fillRect(0, 0, width, height);
+
+    ctx.fillStyle = '#a9cca7';
+    ctx.globalAlpha = 0.3;
+    for (let i = 0; i < 4000; i++) {
+      const rx = Math.random() * width;
+      const ry = Math.random() * height;
+      const rSize = Math.random() * 2 + 1;
+      ctx.fillRect(rx, ry, rSize, rSize);
+    }
+    ctx.globalAlpha = 1.0;
+  }
+  // Festive Purple Confetti (Anniv 2026)
+  else if (bgType === 'festivePurple') {
+    ctx.fillStyle = '#623fa2';
+    ctx.fillRect(0, 0, width, height);
+
+    const colors = ['#ffc6ff', '#b5e2fa', '#ffbe0b', '#ff006e', '#3a86ff'];
+    ctx.globalAlpha = 0.45;
+    for (let i = 0; i < 100; i++) {
+      ctx.fillStyle = colors[Math.floor(Math.random() * colors.length)];
+      ctx.beginPath();
+      const rx = Math.random() * width;
+      const ry = Math.random() * height;
+      const rRadius = Math.random() * 5 + 3;
+      ctx.arc(rx, ry, rRadius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1.0;
+  }
   // Default dark fallback
   else {
     ctx.fillStyle = '#18181b';
