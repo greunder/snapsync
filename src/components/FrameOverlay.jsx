@@ -928,7 +928,7 @@ function PhotoSlot({
 
       {/* Footer Title & Text */}
       <div className="flex flex-col items-center justify-center text-center h-16 relative z-10 w-full px-2 pb-1">
-        <p className="text-yellow-500 font-serif text-[8px] md:text-[10px] tracking-[0.2em] uppercase font-semibold filter drop-shadow">
+        <p className="text-yellow-500 font-serif text-[8px] md:text-[10px] tracking-[0.2em] uppercase font-semibold filter drop-shadow text-center w-full">
           {frame.name}
         </p>
         {isEditing && onTextChange ? (
@@ -961,7 +961,7 @@ function PhotoSlot({
           overlayText ? (
             <p 
               onClick={() => onTextChange && setIsEditing(true)}
-              className={`text-white font-script text-lg md:text-2xl leading-none truncate max-w-[90%] filter drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.9)] ${onTextChange ? 'cursor-pointer hover:text-yellow-300 transition-colors' : ''}`}
+              className={`text-white font-script text-lg md:text-2xl leading-none truncate max-w-[90%] text-center w-full filter drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.9)] ${onTextChange ? 'cursor-pointer hover:text-yellow-300 transition-colors' : ''}`}
               title={onTextChange ? "Cliquez pour modifier le texte" : undefined}
             >
               {overlayText}
@@ -969,7 +969,7 @@ function PhotoSlot({
           ) : (
             <p 
               onClick={() => onTextChange && setIsEditing(true)}
-              className={`text-zinc-400/50 font-script text-base leading-none ${onTextChange ? 'cursor-pointer hover:text-yellow-300 transition-colors' : ''}`}
+              className={`text-zinc-400/50 font-script text-base leading-none text-center w-full ${onTextChange ? 'cursor-pointer hover:text-yellow-300 transition-colors' : ''}`}
               title={onTextChange ? "Cliquez pour modifier le texte" : undefined}
             >
               Texte...
@@ -1031,8 +1031,8 @@ export function FrameSelectorGrid({ frames, selectedFrame, onSelect }) {
             </div>
 
             {/* Miniature frame footer title */}
-            <div className="flex items-center justify-center w-full">
-              <span className="text-[7px] text-white font-medium truncate max-w-full filter drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]">
+            <div className="flex items-center justify-center w-full text-center">
+              <span className="text-[7px] text-white font-medium truncate max-w-full text-center filter drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]">
                 {frame.name}
               </span>
             </div>
