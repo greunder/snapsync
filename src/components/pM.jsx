@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Camera, Monitor, Smartphone } from 'lucide-react';
+import { Camera, Monitor, Smartphone, LogOut } from 'lucide-react';
 import { kt, socket } from '../utils/syncClient';
 import { FrameOverlay, FrameSelectorGrid, thematicFrames, customFrames, frameCategories } from './FrameOverlay';
 
-export default function MobileFrameSelection({ onCapture, queueEntry, stream, kioskPreviewFrame, onCameraSourceChange }) {
+export default function MobileFrameSelection({ onCapture, queueEntry, stream, kioskPreviewFrame, onCameraSourceChange, onQuit }) {
   const [cameraSource, setCameraSource] = useState(queueEntry?.camera_source || 'mobile'); // 'mobile' | 'kiosk'
   const [selectedFrame, setSelectedFrame] = useState(queueEntry?.frame || thematicFrames[0]);
   const [customText, setCustomText] = useState(queueEntry?.custom_text || 'Réunion famille 2026');
@@ -190,9 +190,25 @@ export default function MobileFrameSelection({ onCapture, queueEntry, stream, ki
       animate={{ opacity: 1, y: 0 }}
       className="min-h-screen flex flex-col px-4 py-6 max-w-md mx-auto"
     >
-      <h2 className="font-heading text-xl font-bold text-foreground mb-1 text-center">
-        Personnalisez votre photo
-      </h2>
+      <div className="flex items-center justify-between mb-1">
+        <div className="w-8" /> {/* spacer */}
+        <h2 className="font-heading text-xl font-bold text-foreground text-center flex-1">
+          Personnalisez votre photo
+        </h2>
+        {onQuit && (
+          <button
+            onClick={() => {
+              if (window.confirm("Quitter la session ? Vous perdrez votre place.")) {
+                onQuit();
+              }
+            }}
+            className="w-8 h-8 rounded-lg border border-destructive/30 text-destructive hover:bg-destructive/10 flex items-center justify-center transition-all"
+            title="Quitter la session"
+          >
+            <LogOut className="w-4 h-4" />
+          </button>
+        )}
+      </div>
       <p className="text-muted-foreground text-xs text-center mb-4 uppercase tracking-wider font-semibold text-primary">
         C'est votre tour !
       </p>

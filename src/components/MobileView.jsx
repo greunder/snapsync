@@ -290,7 +290,7 @@ export default function MobileView() {
           )}
           
           {status === 'waiting' && (
-            <MobileWaiting key="waiting" position={position} displayName={queueEntry?.display_name} />
+            <MobileWaiting key="waiting" position={position} displayName={queueEntry?.name || queueEntry?.display_name} onQuit={handleFinish} />
           )}
           
           {status === 'active' && (
@@ -301,6 +301,7 @@ export default function MobileView() {
               stream={mobileStream}
               kioskPreviewFrame={kioskPreviewFrame}
               onCameraSourceChange={handleCameraSourceChange}
+              onQuit={handleFinish}
             />
           )}
           
