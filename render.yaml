@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: snapsync
+    runtime: node
+    repo: https://github.com/greunder/snapsync
+    branch: main
+    buildCommand: npm install && npm run build
+    startCommand: node server.js
+    envVars:
+      - key: PORT
+        value: 10000
