@@ -344,11 +344,55 @@ export function generateFramedPhoto(videoElementOrPhotos, frame, customText, lay
     canvas.width = canvasWidth;
     canvas.height = canvasHeight;
 
+    // Precalculate slots coordinates and boundaries to scale decorations perfectly
+    const getCoords = () => {
+      if (layout === 'single') {
+        const startY = 200;
+        const x = (canvasWidth - slotWidth) / 2;
+        return [{ x, y: startY }];
+      } else if (layout === 'strip') {
+        const startY = 160;
+        const gap = 48;
+        const x = (canvasWidth - slotWidth) / 2;
+        return [
+          { x, y: startY },
+          { x, y: startY + slotHeight + gap },
+          { x, y: startY + 2 * (slotHeight + gap) }
+        ];
+      } else { // grid (2x2)
+        const startY = 240;
+        const gapX = 40;
+        const gapY = 40;
+        const startX = (canvasWidth - (2 * slotWidth + gapX)) / 2;
+        return [
+          { x: startX, y: startY },
+          { x: startX + slotWidth + gapX, y: startY },
+          { x: startX, y: startY + slotHeight + gapY },
+          { x: startX + slotWidth + gapX, y: startY + slotHeight + gapY }
+        ];
+      }
+    };
+
+    const coords = getCoords();
+    const photoLeft = coords[0].x;
+    const photoTop = coords[0].y;
+    const photoRight = coords[coords.length - 1].x + slotWidth;
+    const photoBottom = coords[coords.length - 1].y + slotHeight;
+    const photoWidth = photoRight - photoLeft;
+    const photoHeight = photoBottom - photoTop;
+
     // 1. Procedural Background
     drawProceduralBackground(ctx, canvasWidth, canvasHeight, frame.bgType || 'wood');
 
     // 2. Draw Festive Themed Overlays & Borders (Canvas equivalent of FrameDecorations)
-    drawThemedDecorations(ctx, canvasWidth, canvasHeight, frame);
+    drawThemedDecorations(ctx, canvasWidth, canvasHeight, frame, {
+      left: photoLeft,
+      top: photoTop,
+      right: photoRight,
+      bottom: photoBottom,
+      width: photoWidth,
+      height: photoHeight
+    });
 
     // Draw slot with border and drop shadow
     const drawPhotoSlot = (imgUrl, x, y) => {
@@ -436,35 +480,9 @@ export function generateFramedPhoto(videoElementOrPhotos, frame, customText, lay
       });
     };
 
-    // Render slots based on layout
-    if (layout === 'single') {
-      const x = (canvasWidth - slotWidth) / 2;
-      const y = 200;
-      await drawPhotoSlot(photos[0], x, y);
-    } else if (layout === 'strip') {
-      const startY = 160;
-      const gap = 48;
-      for (let i = 0; i < 3; i++) {
-        const x = (canvasWidth - slotWidth) / 2;
-        const y = startY + i * (slotHeight + gap);
-        await drawPhotoSlot(photos[i], x, y);
-      }
-    } else { // grid
-      const gapX = 40;
-      const gapY = 40;
-      const startX = (canvasWidth - (2 * slotWidth + gapX)) / 2;
-      const startY = 240;
-
-      const coords = [
-        { x: startX, y: startY },
-        { x: startX + slotWidth + gapX, y: startY },
-        { x: startX, y: startY + slotHeight + gapY },
-        { x: startX + slotWidth + gapX, y: startY + slotHeight + gapY }
-      ];
-
-      for (let i = 0; i < 4; i++) {
-        await drawPhotoSlot(coords[i] ? photos[i] : null, coords[i].x, coords[i].y);
-      }
+    // Render slots based on precalculated coordinates
+    for (let i = 0; i < coords.length; i++) {
+      await drawPhotoSlot(photos[i], coords[i].x, coords[i].y);
     }
 
     // 3. Draw Emoji Logo Header
@@ -529,67 +547,12 @@ export function generateFramedPhoto(videoElementOrPhotos, frame, customText, lay
 }
 
 // Draw themed decorations on the Canvas
-function drawThemedDecorations(ctx, width, height, frame) {
+// Draw themed decorations on the Canvas, aligned with the photo slots area
+function drawThemedDecorations(ctx, width, height, frame, photoArea) {
   const category = frame.category;
   const frameId = frame.id;
   const isGala = frameId?.startsWith('gala') || frameId?.startsWith('corpo') || frameId?.startsWith('mariage');
-
-  if (frameId === 'halloween-2026') {
-    ctx.save();
-    ctx.strokeStyle = '#e05a00';
-    ctx.lineWidth = 4;
-    ctx.strokeRect(8, 8, width - 16, height - 16);
-    ctx.restore();
-
-    drawHalloweenWeb(ctx, 0, 0, 120);
-    drawHalloweenPumpkinsCanvas(ctx, width - 100, height - 120);
-    drawHalloweenBats(ctx, width - 100, height * 0.25);
-    drawHalloweenBats(ctx, 80, height * 0.45);
-    return;
-  }
-
-  if (frameId === 'noel-2026') {
-    ctx.save();
-    ctx.strokeStyle = 'rgba(255, 215, 0, 0.3)';
-    ctx.lineWidth = 4;
-    ctx.strokeRect(8, 8, width - 16, height - 16);
-    ctx.restore();
-
-    drawNoelBackgroundDetails(ctx, width, height);
-    drawHollyLeavesCornersCanvas(ctx, width, height);
-    drawChristmasTreeCanvas(ctx, width - 120, 60);
-    return;
-  }
-
-  if (frameId === 'paques-2026') {
-    ctx.save();
-    ctx.strokeStyle = 'rgba(128, 179, 255, 0.3)';
-    ctx.lineWidth = 4;
-    ctx.strokeRect(8, 8, width - 16, height - 16);
-    ctx.restore();
-
-    drawBunnyEarsCanvas(ctx, width / 2, 120);
-    drawEasterEggsCanvas(ctx, 80, height - 120);
-    drawEasterBunnyCanvas(ctx, width - 80, height - 140);
-    return;
-  }
-
-  if (frameId === 'anniv-2026') {
-    ctx.save();
-    ctx.strokeStyle = 'rgba(255, 234, 0, 0.3)';
-    ctx.lineWidth = 4;
-    ctx.strokeRect(8, 8, width - 16, height - 16);
-    ctx.restore();
-
-    drawPartyHatCanvas(ctx, 60, 60);
-    drawPartyHatCanvas(ctx, width - 60, 60, true);
-    drawAnnivBalloonsCanvas(ctx, 80, height - 180);
-    drawAnnivBalloonsCanvas(ctx, width - 80, height - 180, true);
-    drawCupcakeCanvas(ctx, width - 120, height - 120);
-    return;
-  }
-
-  const isAnniversary = category === 'Anniversaire' || isGala;
+  const area = photoArea || { left: 8, top: 8, right: width - 8, bottom: height - 8, width: width - 16, height: height - 16 };
 
   // Helper to draw gold linear gradient border
   const getGoldGradient = (x1, y1, x2, y2) => {
@@ -602,22 +565,79 @@ function drawThemedDecorations(ctx, width, height, frame) {
     return grad;
   };
 
+  if (frameId === 'halloween-2026') {
+    ctx.save();
+    ctx.strokeStyle = '#e05a00';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(area.left - 4, area.top - 4, area.width + 8, area.height + 8);
+    ctx.restore();
+
+    drawHalloweenWeb(ctx, area.left, area.top, 120);
+    drawHalloweenPumpkinsCanvas(ctx, area.right - 45, area.bottom - 25);
+    drawHalloweenBats(ctx, area.right - 40, area.top + 80);
+    drawHalloweenBats(ctx, area.left + 20, area.bottom - 100);
+    return;
+  }
+
+  if (frameId === 'noel-2026') {
+    ctx.save();
+    ctx.strokeStyle = 'rgba(255, 215, 0, 0.3)';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(area.left - 4, area.top - 4, area.width + 8, area.height + 8);
+    ctx.restore();
+
+    drawNoelBackgroundDetails(ctx, width, height);
+    drawHollyLeavesCornersCanvas(ctx, area.left, area.top, area.right, area.bottom);
+    drawChristmasTreeCanvas(ctx, area.right - 25, area.top - 10);
+    return;
+  }
+
+  if (frameId === 'paques-2026') {
+    ctx.save();
+    ctx.strokeStyle = 'rgba(128, 179, 255, 0.3)';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(area.left - 4, area.top - 4, area.width + 8, area.height + 8);
+    ctx.restore();
+
+    drawBunnyEarsCanvas(ctx, area.left + area.width / 2, area.top - 20);
+    drawEasterEggsCanvas(ctx, area.left - 15, area.bottom - 20);
+    drawEasterBunnyCanvas(ctx, area.right - 25, area.bottom - 30);
+    return;
+  }
+
+  if (frameId === 'anniv-2026') {
+    ctx.save();
+    ctx.strokeStyle = 'rgba(255, 234, 0, 0.3)';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(area.left - 4, area.top - 4, area.width + 8, area.height + 8);
+    ctx.restore();
+
+    drawPartyHatCanvas(ctx, area.left - 5, area.top - 15);
+    drawPartyHatCanvas(ctx, area.right + 5, area.top - 15, true);
+    drawAnnivBalloonsCanvas(ctx, area.left - 20, area.bottom - 60);
+    drawAnnivBalloonsCanvas(ctx, area.right + 20, area.bottom - 60, true);
+    drawCupcakeCanvas(ctx, area.right - 20, area.bottom - 20);
+    return;
+  }
+
+  const isAnniversary = category === 'Anniversaire' || isGala;
+
   if (isAnniversary) {
     // Outer double border
     ctx.save();
-    ctx.strokeStyle = getGoldGradient(0, 0, width, height);
+    ctx.strokeStyle = getGoldGradient(area.left, area.top, area.right, area.bottom);
     ctx.lineWidth = 8;
-    ctx.strokeRect(8, 8, width - 16, height - 16);
+    ctx.strokeRect(area.left - 4, area.top - 4, area.width + 8, area.height + 8);
     
     ctx.strokeStyle = '#ffd700';
     ctx.lineWidth = 2;
     ctx.setLineDash([8, 6]);
-    ctx.strokeRect(16, 16, width - 32, height - 32);
+    ctx.strokeRect(area.left + 4, area.top + 4, area.width - 8, area.height - 8);
     ctx.restore();
 
     // Draw gold balloons left and right
-    drawGoldBalloons(ctx, 50, height * 0.25, 45);
-    drawGoldBalloons(ctx, width - 50, height * 0.45, 45, true);
+    drawGoldBalloons(ctx, area.left - 20, area.top + area.height * 0.2, 45);
+    drawGoldBalloons(ctx, area.right + 20, area.top + area.height * 0.5, 45, true);
 
     // Draw confetti sparkles
     drawConfettiSparkles(ctx, width, height);
@@ -625,84 +645,84 @@ function drawThemedDecorations(ctx, width, height, frame) {
 
   else if (category === 'Halloween') {
     ctx.save();
-    const grad = ctx.createLinearGradient(0, 0, width, height);
+    const grad = ctx.createLinearGradient(area.left, area.top, area.right, area.bottom);
     grad.addColorStop(0, '#ff8c00');
     grad.addColorStop(0.5, '#7b2cbf');
     grad.addColorStop(1, '#ff8c00');
     ctx.strokeStyle = grad;
     ctx.lineWidth = 8;
-    ctx.strokeRect(8, 8, width - 16, height - 16);
+    ctx.strokeRect(area.left - 4, area.top - 4, area.width + 8, area.height + 8);
     
     ctx.strokeStyle = '#7b2cbf';
     ctx.lineWidth = 2;
     ctx.setLineDash([8, 6]);
-    ctx.strokeRect(16, 16, width - 32, height - 32);
+    ctx.strokeRect(area.left + 4, area.top + 4, area.width - 8, area.height - 8);
     ctx.restore();
 
-    drawHalloweenWeb(ctx, 0, 0, 120);
-    drawHalloweenWeb(ctx, width, 0, 120, true);
-    drawHalloweenBats(ctx, width - 100, height * 0.35);
+    drawHalloweenWeb(ctx, area.left, area.top, 120);
+    drawHalloweenWeb(ctx, area.right, area.top, 120, true);
+    drawHalloweenBats(ctx, area.right - 30, area.top + 80);
   }
 
   else if (category === 'Noël') {
     ctx.save();
-    const grad = ctx.createLinearGradient(0, 0, width, height);
+    const grad = ctx.createLinearGradient(area.left, area.top, area.right, area.bottom);
     grad.addColorStop(0, '#cc0000');
     grad.addColorStop(0.5, '#006400');
     grad.addColorStop(1, '#cc0000');
     ctx.strokeStyle = grad;
     ctx.lineWidth = 8;
-    ctx.strokeRect(8, 8, width - 16, height - 16);
+    ctx.strokeRect(area.left - 4, area.top - 4, area.width + 8, area.height + 8);
     
     ctx.strokeStyle = '#ffea00';
     ctx.lineWidth = 2;
     ctx.setLineDash([6, 6]);
-    ctx.strokeRect(16, 16, width - 32, height - 32);
+    ctx.strokeRect(area.left + 4, area.top + 4, area.width - 8, area.height - 8);
     ctx.restore();
 
-    drawChristmasOrnamentsCanvas(ctx, width - 120, 0);
+    drawChristmasOrnamentsCanvas(ctx, area.right - 30, area.top);
     drawSnowflakesCanvas(ctx, width, height);
   }
 
   else if (category === 'St-Patrick') {
     ctx.save();
-    const grad = ctx.createLinearGradient(0, 0, width, height);
+    const grad = ctx.createLinearGradient(area.left, area.top, area.right, area.bottom);
     grad.addColorStop(0, '#008000');
     grad.addColorStop(0.5, '#ffd700');
     grad.addColorStop(1, '#004d00');
     ctx.strokeStyle = grad;
     ctx.lineWidth = 8;
-    ctx.strokeRect(8, 8, width - 16, height - 16);
+    ctx.strokeRect(area.left - 4, area.top - 4, area.width + 8, area.height + 8);
     
     ctx.strokeStyle = '#ffd700';
     ctx.lineWidth = 2;
     ctx.setLineDash([8, 6]);
-    ctx.strokeRect(16, 16, width - 32, height - 32);
+    ctx.strokeRect(area.left + 4, area.top + 4, area.width - 8, area.height - 8);
     ctx.restore();
 
-    drawGreenBalloons(ctx, 50, height * 0.25, 45);
-    drawGreenBalloons(ctx, width - 50, height * 0.45, 45, true);
-    drawStPatrickCoinsCanvas(ctx, width - 100, height - 140);
+    drawGreenBalloons(ctx, area.left - 20, area.top + area.height * 0.2, 45);
+    drawGreenBalloons(ctx, area.right + 20, area.top + area.height * 0.5, 45, true);
+    drawStPatrickCoinsCanvas(ctx, area.right - 40, area.bottom - 40);
   }
 
   else if (category === 'Pâques') {
     ctx.save();
-    const grad = ctx.createLinearGradient(0, 0, width, height);
+    const grad = ctx.createLinearGradient(area.left, area.top, area.right, area.bottom);
     grad.addColorStop(0, '#ffd166');
     grad.addColorStop(0.5, '#ffb7b2');
     grad.addColorStop(1, '#ffc6ff');
     ctx.strokeStyle = grad;
     ctx.lineWidth = 8;
-    ctx.strokeRect(8, 8, width - 16, height - 16);
+    ctx.strokeRect(area.left - 4, area.top - 4, area.width + 8, area.height + 8);
     
     ctx.strokeStyle = '#ffffff';
     ctx.lineWidth = 2;
     ctx.setLineDash([6, 6]);
-    ctx.strokeRect(16, 16, width - 32, height - 32);
+    ctx.strokeRect(area.left + 4, area.top + 4, area.width - 8, area.height - 8);
     ctx.restore();
 
-    drawEasterDecoCanvas(ctx, 50, height - 120);
-    drawEasterDecoCanvas(ctx, width - 100, 40, true);
+    drawEasterDecoCanvas(ctx, area.left - 10, area.bottom - 40);
+    drawEasterDecoCanvas(ctx, area.right + 10, area.top + 40, true);
   }
 }
 
@@ -1236,7 +1256,7 @@ function drawNoelBackgroundDetails(ctx, w, h) {
   ctx.restore();
 }
 
-function drawHollyLeavesCornersCanvas(ctx, w, h) {
+function drawHollyLeavesCornersCanvas(ctx, left, top, right, bottom) {
   ctx.save();
   
   const drawHollyCorner = (x, y, flipX, flipY) => {
@@ -1277,11 +1297,10 @@ function drawHollyLeavesCornersCanvas(ctx, w, h) {
     ctx.restore();
   };
 
-  const inset = 96;
-  drawHollyCorner(inset, inset, false, false);
-  drawHollyCorner(w - inset, inset, true, false);
-  drawHollyCorner(inset, h - inset - 120, false, true);
-  drawHollyCorner(w - inset, h - inset - 120, true, true);
+  drawHollyCorner(left + 25, top + 25, false, false);
+  drawHollyCorner(right - 25, top + 25, true, false);
+  drawHollyCorner(left + 25, bottom - 25, false, true);
+  drawHollyCorner(right - 25, bottom - 25, true, true);
 
   ctx.restore();
 }

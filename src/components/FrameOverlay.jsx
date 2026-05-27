@@ -343,11 +343,11 @@ export function FrameDecorations({ category, frameId }) {
   if (frameId === 'halloween-2026') {
     return (
       <div className="absolute inset-0 pointer-events-none z-25">
-        <div className="absolute inset-1.5 border-[2px] border-[#e05a00] rounded-xl opacity-90" />
-        <HalloweenSpiders className="absolute top-1 left-1 w-14 h-14" />
-        <HalloweenBats className="absolute top-[25%] right-1 w-10 h-8" />
-        <HalloweenBats className="absolute top-[45%] left-1.5 w-7 h-5 opacity-70" />
-        <HalloweenPumpkins className="absolute bottom-1 right-1 w-[60px] h-[40px] z-30" />
+        <div className="absolute inset-[-4px] border-[2px] border-[#e05a00] rounded-lg opacity-90" />
+        <HalloweenSpiders className="absolute top-[-10px] left-[-10px] w-14 h-14" />
+        <HalloweenBats className="absolute top-[15%] right-[-5px] w-10 h-8" />
+        <HalloweenBats className="absolute bottom-[30%] left-[-5px] w-7 h-5 opacity-70" />
+        <HalloweenPumpkins className="absolute bottom-[-10px] right-[-10px] w-[60px] h-[40px] z-30" />
       </div>
     );
   }
@@ -355,18 +355,16 @@ export function FrameDecorations({ category, frameId }) {
   if (frameId === 'noel-2026') {
     return (
       <div className="absolute inset-0 pointer-events-none z-25">
-        <div className="absolute inset-1.5 border-[2px] border-[#ffd700]/30 rounded-xl opacity-80" />
+        <div className="absolute inset-[-4px] border-[2px] border-[#ffd700]/30 rounded-lg opacity-80" />
         {/* Floating gold reindeer and snowflakes on background */}
-        <span className="absolute top-[30%] left-[8%] text-[8px] text-[#ffd700] opacity-50">🦌</span>
-        <span className="absolute top-[50%] right-[8%] text-[8px] text-[#ffd700] opacity-50">🦌</span>
-        <span className="absolute top-[20%] right-[25%] text-[6px] text-[#ffd700] opacity-40">❄️</span>
-        <span className="absolute bottom-[30%] left-[25%] text-[6px] text-[#ffd700] opacity-40">❄️</span>
+        <span className="absolute top-[30%] left-[-20px] text-[8px] text-[#ffd700] opacity-50">🦌</span>
+        <span className="absolute top-[50%] right-[-20px] text-[8px] text-[#ffd700] opacity-50">🦌</span>
         
         {/* Holly corners on the inner photo frames */}
-        <HollyLeavesCorners className="absolute inset-[8%] w-[84%] h-[84%] z-20 opacity-90" />
+        <HollyLeavesCorners className="absolute inset-0 w-full h-full z-20 opacity-90" />
         
         {/* Christmas Tree top right */}
-        <ChristmasTreeSVG className="absolute top-[4%] right-[4%] w-[45px] h-[55px] z-30" />
+        <ChristmasTreeSVG className="absolute top-[-25px] right-[-20px] w-[45px] h-[55px] z-30" />
       </div>
     );
   }
@@ -374,13 +372,13 @@ export function FrameDecorations({ category, frameId }) {
   if (frameId === 'paques-2026') {
     return (
       <div className="absolute inset-0 pointer-events-none z-25">
-        <div className="absolute inset-1.5 border-[2px] border-[#80b3ff]/30 rounded-xl opacity-70" />
+        <div className="absolute inset-[-4px] border-[2px] border-[#80b3ff]/30 rounded-lg opacity-70" />
         {/* Bunny ears peaking behind photo frame */}
-        <BunnyEarsSVG className="absolute top-[2%] left-1/2 transform -translate-x-1/2 w-14 h-10 z-0" />
+        <BunnyEarsSVG className="absolute top-[-25px] left-1/2 transform -translate-x-1/2 w-14 h-10 z-0" />
         {/* Easter eggs bottom left */}
-        <EasterEggsSVG className="absolute bottom-1.5 left-1 w-14 h-10 z-30" />
+        <EasterEggsSVG className="absolute bottom-[-10px] left-[-10px] w-14 h-10 z-30" />
         {/* Cute Easter bunny bottom right */}
-        <EasterBunnySVG className="absolute bottom-1.5 right-1 w-12 h-14 z-30" />
+        <EasterBunnySVG className="absolute bottom-[-10px] right-[-10px] w-12 h-14 z-30" />
       </div>
     );
   }
@@ -388,17 +386,17 @@ export function FrameDecorations({ category, frameId }) {
   if (frameId === 'anniv-2026') {
     return (
       <div className="absolute inset-0 pointer-events-none z-25">
-        <div className="absolute inset-1.5 border-[2px] border-[#ffea00]/30 rounded-xl opacity-70" />
+        <div className="absolute inset-[-4px] border-[2px] border-[#ffea00]/30 rounded-lg opacity-70" />
         {/* Party hats top corners */}
-        <PartyHatSVG className="absolute top-1.5 left-1.5 w-8 h-10" />
-        <PartyHatSVG className="absolute top-1.5 right-1.5 w-8 h-10 transform scale-x-[-1]" />
+        <PartyHatSVG className="absolute top-[-15px] left-[-10px] w-8 h-10" />
+        <PartyHatSVG className="absolute top-[-15px] right-[-10px] w-8 h-10 transform scale-x-[-1]" />
         
         {/* Balloons bottom corners */}
-        <AnnivBalloons className="absolute bottom-1.5 left-1 w-12 h-16 z-30" />
-        <AnnivBalloons className="absolute bottom-1.5 right-1.5 w-12 h-16 z-30 transform scale-x-[-1]" />
+        <AnnivBalloons className="absolute bottom-[-15px] left-[-15px] w-12 h-16 z-30" />
+        <AnnivBalloons className="absolute bottom-[-15px] right-[-15px] w-12 h-16 z-30 transform scale-x-[-1]" />
         
         {/* Cupcake bottom right */}
-        <CupcakeCandle className="absolute bottom-1.5 right-2 w-9 h-11 z-35" />
+        <CupcakeCandle className="absolute bottom-[-8px] right-[-8px] w-9 h-11 z-35" />
       </div>
     );
   }
@@ -892,9 +890,6 @@ function PhotoSlot({
         getCardAspectClass()
       }`}
     >
-      {/* Visual Overlays for Festive themes */}
-      <FrameDecorations category={frame.category} frameId={frame.id} />
-
       {/* Top Banner Header / Logo */}
       <div className="flex items-center justify-center py-1 relative z-10">
         <span className="text-xl md:text-2xl filter drop-shadow-md select-none">
@@ -905,13 +900,15 @@ function PhotoSlot({
       {/* Collage Slots Area */}
       <div className="flex-1 flex flex-col justify-center px-1 py-1.5 relative z-10">
         {layout === 'single' && (
-          <div className="w-full max-w-[90%] mx-auto">
+          <div className="w-full max-w-[90%] mx-auto relative">
+            <FrameDecorations category={frame.category} frameId={frame.id} />
             {renderSlot(0)}
           </div>
         )}
 
         {layout === 'strip' && (
-          <div className="flex flex-col gap-2 w-full">
+          <div className="flex flex-col gap-2 w-full relative">
+            <FrameDecorations category={frame.category} frameId={frame.id} />
             {renderSlot(0)}
             {renderSlot(1)}
             {renderSlot(2)}
@@ -919,7 +916,8 @@ function PhotoSlot({
         )}
 
         {layout === 'grid' && (
-          <div className="grid grid-cols-2 gap-2 w-full">
+          <div className="grid grid-cols-2 gap-2 w-full relative">
+            <FrameDecorations category={frame.category} frameId={frame.id} />
             {renderSlot(0)}
             {renderSlot(1)}
             {renderSlot(2)}
