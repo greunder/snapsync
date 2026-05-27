@@ -7,7 +7,7 @@ import { FrameOverlay, FrameSelectorGrid, thematicFrames, customFrames, frameCat
 export default function MobileFrameSelection({ onCapture, queueEntry, stream, kioskPreviewFrame, onCameraSourceChange, onQuit }) {
   const [cameraSource, setCameraSource] = useState(queueEntry?.camera_source || 'mobile'); // 'mobile' | 'kiosk'
   const [selectedFrame, setSelectedFrame] = useState(queueEntry?.frame || thematicFrames[0]);
-  const [customText, setCustomText] = useState(queueEntry?.custom_text || 'Réunion famille 2026');
+  const [customText, setCustomText] = useState(queueEntry?.custom_text || (queueEntry?.frame || thematicFrames[0]).overlayText || 'Réunion famille 2026');
   const [aspectRatio, setAspectRatio] = useState(queueEntry?.aspect_ratio || '4:3'); // '1:1' | '4:3' | '16:9' | '3:4' | '9:16'
   const [layout, setLayout] = useState(queueEntry?.layout || 'single'); // 'single' | 'strip' | 'grid'
 
@@ -72,14 +72,14 @@ export default function MobileFrameSelection({ onCapture, queueEntry, stream, ki
 
   // Sync initial configuration on mount
   useEffect(() => {
-    pushConfiguration(selectedFrame, selectedFrame?.overlayText || '', cameraSource, aspectRatio, layout);
+    pushConfiguration(selectedFrame, customText, cameraSource, aspectRatio, layout);
   }, []);
 
   // Handle Camera Source toggle
   const handleCameraToggle = (source) => {
     setCameraSource(source);
     onCameraSourceChange(source); // Trigger stream lifecycle start/stop in parent
-    pushConfiguration(selectedFrame, activeTab === 'custom' ? customText : (selectedFrame?.overlayText || ''), source, aspectRatio, layout);
+    pushConfiguration(selectedFrame, customText, source, aspectRatio, layout);
   };
 
   const getAspectRatioString = (orient, type) => {
@@ -96,7 +96,7 @@ export default function MobileFrameSelection({ onCapture, queueEntry, stream, ki
     setOrientation(orient);
     const nextRatio = getAspectRatioString(orient, ratioType);
     setAspectRatio(nextRatio);
-    pushConfiguration(selectedFrame, activeTab === 'custom' ? customText : (selectedFrame?.overlayText || ''), cameraSource, nextRatio, layout);
+    pushConfiguration(selectedFrame, customText, cameraSource, nextRatio, layout);
   };
 
   // Handle Ratio Type Change
@@ -104,13 +104,13 @@ export default function MobileFrameSelection({ onCapture, queueEntry, stream, ki
     setRatioType(type);
     const nextRatio = getAspectRatioString(orientation, type);
     setAspectRatio(nextRatio);
-    pushConfiguration(selectedFrame, activeTab === 'custom' ? customText : (selectedFrame?.overlayText || ''), cameraSource, nextRatio, layout);
+    pushConfiguration(selectedFrame, customText, cameraSource, nextRatio, layout);
   };
 
   // Handle Layout Change
   const handleLayoutChange = (lay) => {
     setLayout(lay);
-    pushConfiguration(selectedFrame, activeTab === 'custom' ? customText : (selectedFrame?.overlayText || ''), cameraSource, aspectRatio, lay);
+    pushConfiguration(selectedFrame, customText, cameraSource, aspectRatio, lay);
   };
 
   // Handle Tab Switch
@@ -119,6 +119,7 @@ export default function MobileFrameSelection({ onCapture, queueEntry, stream, ki
     let nextFrame = tab === 'thematic' ? thematicFrames[0] : customFrames[0];
     let nextText = tab === 'thematic' ? (nextFrame.overlayText || '') : customText;
     setSelectedFrame(nextFrame);
+    setCustomText(nextText);
     
     pushConfiguration(nextFrame, nextText, cameraSource, aspectRatio, layout);
   };
@@ -129,12 +130,12 @@ export default function MobileFrameSelection({ onCapture, queueEntry, stream, ki
     const nextText = activeTab === 'custom' ? customText : (frame.overlayText || '');
     
     setSelectedFrame(nextFrame);
+    setCustomText(nextText);
     pushConfiguration(nextFrame, nextText, cameraSource, aspectRatio, layout);
   };
 
   // Handle custom text input
-  const handleTextChange = (e) => {
-    const txt = e.target.value;
+  const handleTextChangeCallback = (txt) => {
     setCustomText(txt);
     if (selectedFrame) {
       const nextFrame = { ...selectedFrame, overlayText: txt };
@@ -143,9 +144,13 @@ export default function MobileFrameSelection({ onCapture, queueEntry, stream, ki
     }
   };
 
+  const handleTextChange = (e) => {
+    handleTextChangeCallback(e.target.value);
+  };
+
   // Trigger countdown sequence
   const triggerCapture = async () => {
-    const text = activeTab === 'custom' ? customText : (selectedFrame?.overlayText || '');
+    const text = customText;
     const captureTotal = layout === 'single' ? 1 : (layout === 'strip' ? 3 : 4);
     
     if (cameraSource === 'kiosk') {
@@ -245,12 +250,13 @@ export default function MobileFrameSelection({ onCapture, queueEntry, stream, ki
           <>
             <FrameOverlay
               frame={selectedFrame}
-              customText={activeTab === 'custom' ? customText : selectedFrame.overlayText}
+              customText={customText}
               photoUrl={cameraSource === 'kiosk' ? kioskPreviewFrame : null}
               videoRef={cameraSource === 'mobile' && stream ? videoRef : null}
               stream={cameraSource === 'mobile' ? stream : null}
               layout={layout}
               aspectRatio={aspectRatio}
+              onTextChange={handleTextChangeCallback}
             />
             {cameraSource === 'kiosk' && !kioskPreviewFrame && (
               <div className="absolute inset-0 bg-black/85 rounded-2xl flex flex-col items-center justify-center text-center p-4 gap-2 z-20">

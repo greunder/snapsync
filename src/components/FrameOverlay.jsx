@@ -696,11 +696,19 @@ export function FrameOverlay({
   layout = 'single', 
   aspectRatio = '4:3', 
   captureIndex = 0, 
-  capturedPhotos = [] 
+  capturedPhotos = [],
+  onTextChange
 }) {
   if (!frame) return null;
   const overlayText = customText !== undefined ? customText : (frame.overlayText || "");
   const bgStyle = getBgStyle(frame.bgType || 'wood');
+
+  const [isEditing, setIsEditing] = React.useState(false);
+  const [editValue, setEditValue] = React.useState(overlayText);
+
+  React.useEffect(() => {
+    setEditValue(overlayText);
+  }, [overlayText]);
 
   const hasWidth = className && (className.includes('w-') || className.includes('max-w-'));
   const widthClass = hasWidth ? 'w-full' : (
@@ -921,18 +929,54 @@ function PhotoSlot({
       </div>
 
       {/* Footer Title & Text */}
-      <div className="flex flex-col items-center justify-center text-center pt-2 pb-1 relative z-10">
+      <div className="flex flex-col items-center justify-center text-center h-16 relative z-10 w-full px-2 pb-1">
         <p className="text-yellow-500 font-serif text-[8px] md:text-[10px] tracking-[0.2em] uppercase font-semibold filter drop-shadow">
           {frame.name}
         </p>
-        {overlayText ? (
-          <p className="text-white font-script text-lg md:text-2xl leading-none truncate max-w-[90%] filter drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.9)]">
-            {overlayText}
-          </p>
+        {isEditing && onTextChange ? (
+          <input
+            type="text"
+            value={editValue}
+            onChange={(e) => setEditValue(e.target.value)}
+            onBlur={() => {
+              setIsEditing(false);
+              if (editValue !== overlayText) {
+                onTextChange(editValue);
+              }
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                setIsEditing(false);
+                if (editValue !== overlayText) {
+                  onTextChange(editValue);
+                }
+              } else if (e.key === 'Escape') {
+                setIsEditing(false);
+                setEditValue(overlayText);
+              }
+            }}
+            autoFocus
+            maxLength={25}
+            className="bg-black/60 border border-yellow-500/50 text-white text-center font-script text-base md:text-xl rounded px-2 py-0.5 focus:outline-none focus:ring-1 focus:ring-yellow-400 w-[90%] max-w-[200px] z-30"
+          />
         ) : (
-          <p className="text-zinc-500/50 font-script text-base leading-none">
-            Texte...
-          </p>
+          overlayText ? (
+            <p 
+              onClick={() => onTextChange && setIsEditing(true)}
+              className={`text-white font-script text-lg md:text-2xl leading-none truncate max-w-[90%] filter drop-shadow-[0_1.5px_2px_rgba(0,0,0,0.9)] ${onTextChange ? 'cursor-pointer hover:text-yellow-300 transition-colors' : ''}`}
+              title={onTextChange ? "Cliquez pour modifier le texte" : undefined}
+            >
+              {overlayText}
+            </p>
+          ) : (
+            <p 
+              onClick={() => onTextChange && setIsEditing(true)}
+              className={`text-zinc-400/50 font-script text-base leading-none ${onTextChange ? 'cursor-pointer hover:text-yellow-300 transition-colors' : ''}`}
+              title={onTextChange ? "Cliquez pour modifier le texte" : undefined}
+            >
+              Texte...
+            </p>
+          )
         )}
       </div>
 

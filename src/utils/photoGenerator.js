@@ -416,18 +416,20 @@ export function generateFramedPhoto(videoElementOrPhotos, frame, customText, lay
     }
 
     // 5. Draw Texts
-    const footerY = canvasHeight - (layout === 'strip' ? 140 : 180);
-    
-    // category line
-    ctx.fillStyle = '#eab308';
-    ctx.font = 'bold 24px "Playfair Display", serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(frame.name.toUpperCase(), canvasWidth / 2, footerY);
+    const footerSpace = layout === 'strip' ? 250 : 280;
+    const footerCenter = canvasHeight - (footerSpace / 2);
 
-    // custom text line
     const textVal = customText !== undefined ? customText : (frame.overlayText || "");
-    if (textVal && textVal.trim() !== '') {
+    const hasCustomText = textVal && textVal.trim() !== '';
+
+    if (hasCustomText) {
+      // Draw category title shifted up and custom text shifted down relative to footerCenter
+      ctx.fillStyle = '#eab308';
+      ctx.font = 'bold 24px "Playfair Display", serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(frame.name.toUpperCase(), canvasWidth / 2, footerCenter - 40);
+
       ctx.save();
       ctx.shadowColor = 'rgba(0, 0, 0, 0.85)';
       ctx.shadowBlur = 6;
@@ -438,8 +440,15 @@ export function generateFramedPhoto(videoElementOrPhotos, frame, customText, lay
       ctx.font = 'normal 72px "Great Vibes", cursive';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(textVal, canvasWidth / 2, footerY + 80);
+      ctx.fillText(textVal, canvasWidth / 2, footerCenter + 40);
       ctx.restore();
+    } else {
+      // Draw only category title, perfectly centered in the footer space
+      ctx.fillStyle = '#eab308';
+      ctx.font = 'bold 30px "Playfair Display", serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(frame.name.toUpperCase(), canvasWidth / 2, footerCenter);
     }
 
     resolve(canvas.toDataURL('image/jpeg', 0.85));
