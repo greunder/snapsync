@@ -325,10 +325,11 @@ export default function KioskView() {
     }
   };
 
-  // Construct local Wi-Fi join URL (using HTTPS so phone browsers don't block getUserMedia)
-  const joinUrl = localIp 
-    ? `https://${localIp}:8443/join` 
-    : `${window.location.origin.replace(/^http:/, 'https:')}/join`;
+  // Construct join URL (use local IP only if accessed via localhost/127.0.0.1, otherwise use current window origin)
+  const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  const joinUrl = (isLocalhost && localIp)
+    ? `https://${localIp}:8443/join`
+    : `${window.location.origin}/join`;
   
   const qrCodeApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=${encodeURIComponent(joinUrl)}&bgcolor=ffffff&color=0f172a&margin=1`;
 
