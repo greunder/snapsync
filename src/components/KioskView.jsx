@@ -335,6 +335,10 @@ export default function KioskView() {
 
   return (
     <div className="min-h-screen bg-gradient-to-tr from-background via-background to-primary/5 flex flex-col lg:flex-row items-center justify-center lg:items-stretch relative p-6 gap-6 overflow-hidden font-body select-none">
+      {/* Full screen white flash simulation */}
+      {showFlash && (
+        <div className="fixed inset-0 bg-white z-[999] pointer-events-none" />
+      )}
       
       {/* Dynamic ambient blobs */}
       <div className="absolute top-[-10%] left-[-15%] w-[600px] h-[600px] rounded-full bg-gradient-to-br from-primary/10 to-amber-200/10 filter blur-3xl opacity-75 pointer-events-none z-0" />
