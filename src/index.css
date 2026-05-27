@@ -1,0 +1,76 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-heading: "Outfit", sans-serif;
+    --font-body: "Plus Jakarta Sans", sans-serif;
+    --background: 30 25% 97.5%; /* Oyster Cream (#FAF8F5) */
+    --foreground: 30 10% 8%; /* Obsidian Charcoal (#151413) */
+    --card: 0 0% 100%; /* Pure white */
+    --card-foreground: 30 10% 8%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 30 10% 8%;
+    --primary: 15 95% 55%; /* Sunset Tangerine (#FF5622) */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 30 12% 93%; /* Soft Warm Sandy Gray */
+    --secondary-foreground: 30 10% 8%;
+    --muted: 30 12% 93%;
+    --muted-foreground: 30 4% 45%; /* Warm Muted Gray */
+    --accent: 15 95% 55%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 30 10% 88%; /* Soft warm sandy borders */
+    --input: 30 10% 88%;
+    --ring: 15 95% 55%;
+    --radius: 1.25rem;
+  }
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: var(--font-body);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+}
+
+/* Custom Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: hsl(var(--card));
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.5);
+}
+
+/* Hide scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Calligraphy and Serif Typography Classes */
+.font-script {
+  font-family: 'Great Vibes', cursive;
+}
+
+.font-serif {
+  font-family: 'Playfair Display', serif;
+}
