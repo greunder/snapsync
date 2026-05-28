@@ -900,7 +900,7 @@ function PhotoSlot({
       {/* Collage Slots Area */}
       <div className="flex-1 flex flex-col justify-center px-1 py-1.5 relative z-10">
         {layout === 'single' && (
-          <div className="w-full max-w-[90%] mx-auto relative">
+          <div className="w-full relative">
             <FrameDecorations category={frame.category} frameId={frame.id} />
             {renderSlot(0)}
           </div>

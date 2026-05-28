@@ -267,6 +267,20 @@ export function captureVideoSnapshot(videoElement, aspectRatio = '4:3') {
   });
 }
 
+export function getCardAspectRatio(layout, aspectRatio) {
+  if (layout === 'strip') {
+    if (aspectRatio === '16:9') return 1 / 2.6;
+    if (aspectRatio === '3:4') return 1 / 4.2;
+    if (aspectRatio === '9:16') return 1 / 5.5;
+    return 1 / 3.2; // 4:3 or 1:1
+  } else { // single or grid
+    if (aspectRatio === '16:9') return 4 / 3.5;
+    if (aspectRatio === '3:4') return 3 / 4.5;
+    if (aspectRatio === '9:16') return 3 / 5.5;
+    return 3 / 4; // 4:3 or 1:1
+  }
+}
+
 // Generate the final framed photobooth collage. Supports video input (fallback to single)
 // or array of base64 images (completed collage).
 export function generateFramedPhoto(videoElementOrPhotos, frame, customText, layout = 'single', aspectRatio = '4:3') {
@@ -292,94 +306,100 @@ export function generateFramedPhoto(videoElementOrPhotos, frame, customText, lay
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
 
-    // Calculate slot sizes dynamically (bounding boxes are adjusted for portrait)
-    const getSlotSize = () => {
-      if (layout === 'single') {
-        if (aspectRatio === '1:1') return { slotWidth: 960, slotHeight: 960 };
-        if (aspectRatio === '16:9') return { slotWidth: 960, slotHeight: 540 };
-        if (aspectRatio === '3:4') return { slotWidth: 825, slotHeight: 1100 };
-        if (aspectRatio === '9:16') return { slotWidth: 620, slotHeight: 1100 };
-        return { slotWidth: 960, slotHeight: 720 }; // default 4:3
-      } else if (layout === 'strip') {
-        if (aspectRatio === '1:1') return { slotWidth: 680, slotHeight: 680 };
-        if (aspectRatio === '16:9') return { slotWidth: 680, slotHeight: 382 };
-        if (aspectRatio === '3:4') return { slotWidth: 510, slotHeight: 680 };
-        if (aspectRatio === '9:16') return { slotWidth: 382, slotHeight: 680 };
-        return { slotWidth: 680, slotHeight: 510 }; // default 4:3
-      } else { // grid (2x2)
-        if (aspectRatio === '1:1') return { slotWidth: 480, slotHeight: 480 };
-        if (aspectRatio === '16:9') return { slotWidth: 480, slotHeight: 270 };
-        if (aspectRatio === '3:4') return { slotWidth: 360, slotHeight: 480 };
-        if (aspectRatio === '9:16') return { slotWidth: 270, slotHeight: 480 };
-        return { slotWidth: 480, slotHeight: 360 }; // default 4:3
-      }
-    };
-
-    const { slotWidth, slotHeight } = getSlotSize();
-    const borderThickness = layout === 'grid' ? 12 : 16;
-
-    // Calculate canvas size dynamically based on layout and slot size
     const canvasWidth = layout === 'strip' ? 800 : 1200;
-    const getCanvasHeight = () => {
-      if (layout === 'strip') {
-        const gap = 48;
-        const startY = 160;
-        const footerSpace = 250;
-        const totalSlotHeight = 3 * slotHeight + 2 * gap;
-        return startY + totalSlotHeight + footerSpace;
-      } else if (layout === 'single') {
-        const startY = 200;
-        const footerSpace = 280;
-        return startY + slotHeight + footerSpace;
-      } else { // grid (2x2)
-        const gapY = 40;
-        const startY = 240;
-        const footerSpace = 280;
-        const totalSlotHeight = 2 * slotHeight + gapY;
-        return startY + totalSlotHeight + footerSpace;
-      }
-    };
-    const canvasHeight = getCanvasHeight();
+    const cardRatio = getCardAspectRatio(layout, aspectRatio);
+    const canvasHeight = Math.round(canvasWidth / cardRatio);
 
     canvas.width = canvasWidth;
     canvas.height = canvasHeight;
 
-    // Precalculate slots coordinates and boundaries to scale decorations perfectly
+    const cardBorderMargin = layout === 'strip' ? 32 : 48;
+
+    // Determine target photo slot aspect ratio
+    let photoAspectRatio = 4 / 3;
+    if (aspectRatio === '1:1') photoAspectRatio = 1.0;
+    if (aspectRatio === '16:9') photoAspectRatio = 16 / 9;
+    if (aspectRatio === '3:4') photoAspectRatio = 3 / 4;
+    if (aspectRatio === '9:16') photoAspectRatio = 9 / 16;
+
+    // Define proportions for header and footer spaces
+    const headerSpace = canvasHeight * 0.12;
+    const footerSpace = canvasHeight * 0.18;
+    const maxAllowedWidth = canvasWidth - 2 * cardBorderMargin;
+    const maxAllowedHeight = canvasHeight - headerSpace - footerSpace;
+
+    // Determine horizontal and vertical gaps
+    let gapX = 0;
+    let gapY = 0;
+    if (layout === 'grid') {
+      gapX = 40 * (canvasWidth / 1200);
+      gapY = 40 * (canvasWidth / 1200);
+    } else if (layout === 'strip') {
+      gapY = 48 * (canvasWidth / 800);
+    }
+
+    // Try sizing the slot by width first
+    let currentSlotWidth = 0;
+    if (layout === 'single' || layout === 'strip') {
+      currentSlotWidth = maxAllowedWidth;
+    } else { // grid
+      currentSlotWidth = (maxAllowedWidth - gapX) / 2;
+    }
+    let currentSlotHeight = currentSlotWidth / photoAspectRatio;
+
+    let totalSlotsWidth = layout === 'grid' ? (2 * currentSlotWidth + gapX) : currentSlotWidth;
+    let totalSlotsHeight = 0;
+    if (layout === 'single') {
+      totalSlotsHeight = currentSlotHeight;
+    } else if (layout === 'strip') {
+      totalSlotsHeight = 3 * currentSlotHeight + 2 * gapY;
+    } else { // grid
+      totalSlotsHeight = 2 * currentSlotHeight + gapY;
+    }
+
+    // Shrink slots if they exceed available height (ensure they always fit perfectly)
+    if (totalSlotsHeight > maxAllowedHeight) {
+      const scaleFactor = maxAllowedHeight / totalSlotsHeight;
+      currentSlotWidth *= scaleFactor;
+      currentSlotHeight *= scaleFactor;
+      totalSlotsWidth *= scaleFactor;
+      totalSlotsHeight = maxAllowedHeight;
+    }
+
+    const slotWidth = Math.round(currentSlotWidth);
+    const slotHeight = Math.round(currentSlotHeight);
+
+    const slotsLeft = Math.round((canvasWidth - totalSlotsWidth) / 2);
+    const slotsTop = Math.round(headerSpace + (maxAllowedHeight - totalSlotsHeight) / 2);
+
     const getCoords = () => {
       if (layout === 'single') {
-        const startY = 200;
-        const x = (canvasWidth - slotWidth) / 2;
-        return [{ x, y: startY }];
+        return [{ x: slotsLeft, y: slotsTop }];
       } else if (layout === 'strip') {
-        const startY = 160;
-        const gap = 48;
-        const x = (canvasWidth - slotWidth) / 2;
         return [
-          { x, y: startY },
-          { x, y: startY + slotHeight + gap },
-          { x, y: startY + 2 * (slotHeight + gap) }
+          { x: slotsLeft, y: slotsTop },
+          { x: slotsLeft, y: Math.round(slotsTop + slotHeight + gapY) },
+          { x: slotsLeft, y: Math.round(slotsTop + 2 * (slotHeight + gapY)) }
         ];
       } else { // grid (2x2)
-        const startY = 240;
-        const gapX = 40;
-        const gapY = 40;
-        const startX = (canvasWidth - (2 * slotWidth + gapX)) / 2;
         return [
-          { x: startX, y: startY },
-          { x: startX + slotWidth + gapX, y: startY },
-          { x: startX, y: startY + slotHeight + gapY },
-          { x: startX + slotWidth + gapX, y: startY + slotHeight + gapY }
+          { x: slotsLeft, y: slotsTop },
+          { x: Math.round(slotsLeft + slotWidth + gapX), y: slotsTop },
+          { x: slotsLeft, y: Math.round(slotsTop + slotHeight + gapY) },
+          { x: Math.round(slotsLeft + slotWidth + gapX), y: Math.round(slotsTop + slotHeight + gapY) }
         ];
       }
     };
 
     const coords = getCoords();
-    const photoLeft = coords[0].x;
-    const photoTop = coords[0].y;
-    const photoRight = coords[coords.length - 1].x + slotWidth;
-    const photoBottom = coords[coords.length - 1].y + slotHeight;
-    const photoWidth = photoRight - photoLeft;
-    const photoHeight = photoBottom - photoTop;
+    const photoLeft = slotsLeft;
+    const photoTop = slotsTop;
+    const photoRight = Math.round(slotsLeft + totalSlotsWidth);
+    const photoBottom = Math.round(slotsTop + totalSlotsHeight);
+    const photoWidth = totalSlotsWidth;
+    const photoHeight = totalSlotsHeight;
+
+    const borderThickness = layout === 'grid' ? 12 : 16;
 
     // 1. Procedural Background
     drawProceduralBackground(ctx, canvasWidth, canvasHeight, frame.bgType || 'wood');
@@ -507,8 +527,10 @@ export function generateFramedPhoto(videoElementOrPhotos, frame, customText, lay
     }
 
     // 5. Draw Texts
-    const footerSpace = layout === 'strip' ? 250 : 280;
-    const footerCenter = canvasHeight - (footerSpace / 2);
+    const dynamicFooterSpace = canvasHeight * 0.18;
+    const footerCenter = Math.round(canvasHeight - (dynamicFooterSpace / 2));
+    const fontScale = canvasWidth / 1200;
+    const textOffset = Math.round(45 * fontScale);
 
     const textVal = customText !== undefined ? customText : (frame.overlayText || "");
     const hasCustomText = textVal && textVal.trim() !== '';
@@ -516,27 +538,27 @@ export function generateFramedPhoto(videoElementOrPhotos, frame, customText, lay
     if (hasCustomText) {
       // Draw category title shifted up and custom text shifted down relative to footerCenter
       ctx.fillStyle = '#eab308';
-      ctx.font = 'bold 24px "Playfair Display", serif';
+      ctx.font = `bold ${Math.round(24 * fontScale)}px "Playfair Display", serif`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(frame.name.toUpperCase(), canvasWidth / 2, footerCenter - 40);
+      ctx.fillText(frame.name.toUpperCase(), canvasWidth / 2, footerCenter - textOffset);
 
       ctx.save();
       ctx.shadowColor = 'rgba(0, 0, 0, 0.85)';
-      ctx.shadowBlur = 6;
+      ctx.shadowBlur = 6 * fontScale;
       ctx.shadowOffsetX = 0;
-      ctx.shadowOffsetY = 3;
+      ctx.shadowOffsetY = 3 * fontScale;
 
       ctx.fillStyle = '#ffffff';
-      ctx.font = 'normal 72px "Great Vibes", cursive';
+      ctx.font = `normal ${Math.round(72 * fontScale)}px "Great Vibes", cursive`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(textVal, canvasWidth / 2, footerCenter + 40);
+      ctx.fillText(textVal, canvasWidth / 2, footerCenter + textOffset);
       ctx.restore();
     } else {
       // Draw only category title, perfectly centered in the footer space
       ctx.fillStyle = '#eab308';
-      ctx.font = 'bold 30px "Playfair Display", serif';
+      ctx.font = `bold ${Math.round(30 * fontScale)}px "Playfair Display", serif`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(frame.name.toUpperCase(), canvasWidth / 2, footerCenter);
