@@ -384,16 +384,6 @@ export function generateFramedPhoto(videoElementOrPhotos, frame, customText, lay
     // 1. Procedural Background
     drawProceduralBackground(ctx, canvasWidth, canvasHeight, frame.bgType || 'wood');
 
-    // 2. Draw Festive Themed Overlays & Borders (Canvas equivalent of FrameDecorations)
-    drawThemedDecorations(ctx, canvasWidth, canvasHeight, frame, {
-      left: photoLeft,
-      top: photoTop,
-      right: photoRight,
-      bottom: photoBottom,
-      width: photoWidth,
-      height: photoHeight
-    });
-
     // Draw slot with border and drop shadow
     const drawPhotoSlot = (imgUrl, x, y) => {
       return new Promise((res) => {
@@ -484,6 +474,16 @@ export function generateFramedPhoto(videoElementOrPhotos, frame, customText, lay
     for (let i = 0; i < coords.length; i++) {
       await drawPhotoSlot(photos[i], coords[i].x, coords[i].y);
     }
+
+    // 2. Draw Festive Themed Overlays & Borders (Canvas equivalent of FrameDecorations)
+    drawThemedDecorations(ctx, canvasWidth, canvasHeight, frame, {
+      left: photoLeft,
+      top: photoTop,
+      right: photoRight,
+      bottom: photoBottom,
+      width: photoWidth,
+      height: photoHeight
+    });
 
     // 3. Draw Emoji Logo Header
     if (frame.emoji) {
