@@ -554,6 +554,9 @@ function drawThemedDecorations(ctx, width, height, frame, photoArea) {
   const isGala = frameId?.startsWith('gala') || frameId?.startsWith('corpo') || frameId?.startsWith('mariage');
   const area = photoArea || { left: 8, top: 8, right: width - 8, bottom: height - 8, width: width - 16, height: height - 16 };
 
+  // Calculate the scale factor relative to a reference slots area width of 280px
+  const scale = area.width / 280;
+
   // Helper to draw gold linear gradient border
   const getGoldGradient = (x1, y1, x2, y2) => {
     const grad = ctx.createLinearGradient(x1, y1, x2, y2);
@@ -565,58 +568,67 @@ function drawThemedDecorations(ctx, width, height, frame, photoArea) {
     return grad;
   };
 
+  // Helper to draw custom elements with scale
+  const drawScaled = (drawFn, x, y, ...args) => {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.scale(scale, scale);
+    drawFn(ctx, 0, 0, ...args);
+    ctx.restore();
+  };
+
   if (frameId === 'halloween-2026') {
     ctx.save();
     ctx.strokeStyle = '#e05a00';
-    ctx.lineWidth = 4;
-    ctx.strokeRect(area.left - 4, area.top - 4, area.width + 8, area.height + 8);
+    ctx.lineWidth = 4 * scale;
+    ctx.strokeRect(area.left - 4 * scale, area.top - 4 * scale, area.width + 8 * scale, area.height + 8 * scale);
     ctx.restore();
 
-    drawHalloweenWeb(ctx, area.left, area.top, 120);
-    drawHalloweenPumpkinsCanvas(ctx, area.right - 45, area.bottom - 25);
-    drawHalloweenBats(ctx, area.right - 40, area.top + 80);
-    drawHalloweenBats(ctx, area.left + 20, area.bottom - 100);
+    drawScaled(drawHalloweenWeb, area.left, area.top, 120, false);
+    drawScaled(drawHalloweenPumpkinsCanvas, area.right - 10 * scale, area.bottom - 10 * scale);
+    drawScaled(drawHalloweenBats, area.right - 5 * scale, area.top + area.height * 0.15);
+    drawScaled(drawHalloweenBats, area.left - 5 * scale, area.bottom - area.height * 0.30);
     return;
   }
 
   if (frameId === 'noel-2026') {
     ctx.save();
     ctx.strokeStyle = 'rgba(255, 215, 0, 0.3)';
-    ctx.lineWidth = 4;
-    ctx.strokeRect(area.left - 4, area.top - 4, area.width + 8, area.height + 8);
+    ctx.lineWidth = 4 * scale;
+    ctx.strokeRect(area.left - 4 * scale, area.top - 4 * scale, area.width + 8 * scale, area.height + 8 * scale);
     ctx.restore();
 
-    drawNoelBackgroundDetails(ctx, width, height);
-    drawHollyLeavesCornersCanvas(ctx, area.left, area.top, area.right, area.bottom);
-    drawChristmasTreeCanvas(ctx, area.right - 25, area.top - 10);
+    drawNoelBackgroundDetails(ctx, width, height, scale);
+    drawHollyLeavesCornersCanvas(ctx, area.left, area.top, area.right, area.bottom, scale);
+    drawScaled(drawChristmasTreeCanvas, area.right - 20 * scale, area.top - 25 * scale);
     return;
   }
 
   if (frameId === 'paques-2026') {
     ctx.save();
     ctx.strokeStyle = 'rgba(128, 179, 255, 0.3)';
-    ctx.lineWidth = 4;
-    ctx.strokeRect(area.left - 4, area.top - 4, area.width + 8, area.height + 8);
+    ctx.lineWidth = 4 * scale;
+    ctx.strokeRect(area.left - 4 * scale, area.top - 4 * scale, area.width + 8 * scale, area.height + 8 * scale);
     ctx.restore();
 
-    drawBunnyEarsCanvas(ctx, area.left + area.width / 2, area.top - 20);
-    drawEasterEggsCanvas(ctx, area.left - 15, area.bottom - 20);
-    drawEasterBunnyCanvas(ctx, area.right - 25, area.bottom - 30);
+    drawScaled(drawBunnyEarsCanvas, area.left + area.width / 2, area.top - 25 * scale);
+    drawScaled(drawEasterEggsCanvas, area.left - 10 * scale, area.bottom - 10 * scale);
+    drawScaled(drawEasterBunnyCanvas, area.right - 10 * scale, area.bottom - 10 * scale);
     return;
   }
 
   if (frameId === 'anniv-2026') {
     ctx.save();
     ctx.strokeStyle = 'rgba(255, 234, 0, 0.3)';
-    ctx.lineWidth = 4;
-    ctx.strokeRect(area.left - 4, area.top - 4, area.width + 8, area.height + 8);
+    ctx.lineWidth = 4 * scale;
+    ctx.strokeRect(area.left - 4 * scale, area.top - 4 * scale, area.width + 8 * scale, area.height + 8 * scale);
     ctx.restore();
 
-    drawPartyHatCanvas(ctx, area.left - 5, area.top - 15);
-    drawPartyHatCanvas(ctx, area.right + 5, area.top - 15, true);
-    drawAnnivBalloonsCanvas(ctx, area.left - 20, area.bottom - 60);
-    drawAnnivBalloonsCanvas(ctx, area.right + 20, area.bottom - 60, true);
-    drawCupcakeCanvas(ctx, area.right - 20, area.bottom - 20);
+    drawScaled(drawPartyHatCanvas, area.left - 10 * scale, area.top - 15 * scale, false);
+    drawScaled(drawPartyHatCanvas, area.right - 10 * scale, area.top - 15 * scale, true);
+    drawScaled(drawAnnivBalloonsCanvas, area.left - 15 * scale, area.bottom - 15 * scale, false);
+    drawScaled(drawAnnivBalloonsCanvas, area.right - 15 * scale, area.bottom - 15 * scale, true);
+    drawScaled(drawCupcakeCanvas, area.right - 8 * scale, area.bottom - 8 * scale);
     return;
   }
 
@@ -626,21 +638,21 @@ function drawThemedDecorations(ctx, width, height, frame, photoArea) {
     // Outer double border
     ctx.save();
     ctx.strokeStyle = getGoldGradient(area.left, area.top, area.right, area.bottom);
-    ctx.lineWidth = 8;
-    ctx.strokeRect(area.left - 4, area.top - 4, area.width + 8, area.height + 8);
+    ctx.lineWidth = 8 * scale;
+    ctx.strokeRect(area.left - 4 * scale, area.top - 4 * scale, area.width + 8 * scale, area.height + 8 * scale);
     
     ctx.strokeStyle = '#ffd700';
-    ctx.lineWidth = 2;
-    ctx.setLineDash([8, 6]);
-    ctx.strokeRect(area.left + 4, area.top + 4, area.width - 8, area.height - 8);
+    ctx.lineWidth = 2 * scale;
+    ctx.setLineDash([8 * scale, 6 * scale]);
+    ctx.strokeRect(area.left + 4 * scale, area.top + 4 * scale, area.width - 8 * scale, area.height - 8 * scale);
     ctx.restore();
 
     // Draw gold balloons left and right
-    drawGoldBalloons(ctx, area.left - 20, area.top + area.height * 0.2, 45);
-    drawGoldBalloons(ctx, area.right + 20, area.top + area.height * 0.5, 45, true);
+    drawScaled(drawGoldBalloons, area.left - 12 * scale, area.top + area.height * 0.18, 45, false);
+    drawScaled(drawGoldBalloons, area.right - 12 * scale, area.top + area.height * 0.45, 45, true);
 
     // Draw confetti sparkles
-    drawConfettiSparkles(ctx, width, height);
+    drawConfettiSparkles(ctx, width, height, scale);
   }
 
   else if (category === 'Halloween') {
@@ -650,18 +662,18 @@ function drawThemedDecorations(ctx, width, height, frame, photoArea) {
     grad.addColorStop(0.5, '#7b2cbf');
     grad.addColorStop(1, '#ff8c00');
     ctx.strokeStyle = grad;
-    ctx.lineWidth = 8;
-    ctx.strokeRect(area.left - 4, area.top - 4, area.width + 8, area.height + 8);
+    ctx.lineWidth = 8 * scale;
+    ctx.strokeRect(area.left - 4 * scale, area.top - 4 * scale, area.width + 8 * scale, area.height + 8 * scale);
     
     ctx.strokeStyle = '#7b2cbf';
-    ctx.lineWidth = 2;
-    ctx.setLineDash([8, 6]);
-    ctx.strokeRect(area.left + 4, area.top + 4, area.width - 8, area.height - 8);
+    ctx.lineWidth = 2 * scale;
+    ctx.setLineDash([8 * scale, 6 * scale]);
+    ctx.strokeRect(area.left + 4 * scale, area.top + 4 * scale, area.width - 8 * scale, area.height - 8 * scale);
     ctx.restore();
 
-    drawHalloweenWeb(ctx, area.left, area.top, 120);
-    drawHalloweenWeb(ctx, area.right, area.top, 120, true);
-    drawHalloweenBats(ctx, area.right - 30, area.top + 80);
+    drawScaled(drawHalloweenWeb, area.left, area.top, 120, false);
+    drawScaled(drawHalloweenWeb, area.right, area.top, 120, true);
+    drawScaled(drawHalloweenBats, area.right - 30 * scale, area.top + 80 * scale);
   }
 
   else if (category === 'Noël') {
@@ -671,17 +683,17 @@ function drawThemedDecorations(ctx, width, height, frame, photoArea) {
     grad.addColorStop(0.5, '#006400');
     grad.addColorStop(1, '#cc0000');
     ctx.strokeStyle = grad;
-    ctx.lineWidth = 8;
-    ctx.strokeRect(area.left - 4, area.top - 4, area.width + 8, area.height + 8);
+    ctx.lineWidth = 8 * scale;
+    ctx.strokeRect(area.left - 4 * scale, area.top - 4 * scale, area.width + 8 * scale, area.height + 8 * scale);
     
     ctx.strokeStyle = '#ffea00';
-    ctx.lineWidth = 2;
-    ctx.setLineDash([6, 6]);
-    ctx.strokeRect(area.left + 4, area.top + 4, area.width - 8, area.height - 8);
+    ctx.lineWidth = 2 * scale;
+    ctx.setLineDash([6 * scale, 6 * scale]);
+    ctx.strokeRect(area.left + 4 * scale, area.top + 4 * scale, area.width - 8 * scale, area.height - 8 * scale);
     ctx.restore();
 
-    drawChristmasOrnamentsCanvas(ctx, area.right - 30, area.top);
-    drawSnowflakesCanvas(ctx, width, height);
+    drawScaled(drawChristmasOrnamentsCanvas, area.right - 30 * scale, area.top);
+    drawSnowflakesCanvas(ctx, width, height, scale);
   }
 
   else if (category === 'St-Patrick') {
@@ -691,18 +703,18 @@ function drawThemedDecorations(ctx, width, height, frame, photoArea) {
     grad.addColorStop(0.5, '#ffd700');
     grad.addColorStop(1, '#004d00');
     ctx.strokeStyle = grad;
-    ctx.lineWidth = 8;
-    ctx.strokeRect(area.left - 4, area.top - 4, area.width + 8, area.height + 8);
+    ctx.lineWidth = 8 * scale;
+    ctx.strokeRect(area.left - 4 * scale, area.top - 4 * scale, area.width + 8 * scale, area.height + 8 * scale);
     
     ctx.strokeStyle = '#ffd700';
-    ctx.lineWidth = 2;
-    ctx.setLineDash([8, 6]);
-    ctx.strokeRect(area.left + 4, area.top + 4, area.width - 8, area.height - 8);
+    ctx.lineWidth = 2 * scale;
+    ctx.setLineDash([8 * scale, 6 * scale]);
+    ctx.strokeRect(area.left + 4 * scale, area.top + 4 * scale, area.width - 8 * scale, area.height - 8 * scale);
     ctx.restore();
 
-    drawGreenBalloons(ctx, area.left - 20, area.top + area.height * 0.2, 45);
-    drawGreenBalloons(ctx, area.right + 20, area.top + area.height * 0.5, 45, true);
-    drawStPatrickCoinsCanvas(ctx, area.right - 40, area.bottom - 40);
+    drawScaled(drawGreenBalloons, area.left - 12 * scale, area.top + area.height * 0.18, 45, false);
+    drawScaled(drawGreenBalloons, area.right - 12 * scale, area.top + area.height * 0.45, 45, true);
+    drawScaled(drawStPatrickCoinsCanvas, area.right - 40 * scale, area.bottom - 40 * scale);
   }
 
   else if (category === 'Pâques') {
@@ -712,17 +724,17 @@ function drawThemedDecorations(ctx, width, height, frame, photoArea) {
     grad.addColorStop(0.5, '#ffb7b2');
     grad.addColorStop(1, '#ffc6ff');
     ctx.strokeStyle = grad;
-    ctx.lineWidth = 8;
-    ctx.strokeRect(area.left - 4, area.top - 4, area.width + 8, area.height + 8);
+    ctx.lineWidth = 8 * scale;
+    ctx.strokeRect(area.left - 4 * scale, area.top - 4 * scale, area.width + 8 * scale, area.height + 8 * scale);
     
     ctx.strokeStyle = '#ffffff';
-    ctx.lineWidth = 2;
-    ctx.setLineDash([6, 6]);
-    ctx.strokeRect(area.left + 4, area.top + 4, area.width - 8, area.height - 8);
+    ctx.lineWidth = 2 * scale;
+    ctx.setLineDash([6 * scale, 6 * scale]);
+    ctx.strokeRect(area.left + 4 * scale, area.top + 4 * scale, area.width - 8 * scale, area.height - 8 * scale);
     ctx.restore();
 
-    drawEasterDecoCanvas(ctx, area.left - 10, area.bottom - 40);
-    drawEasterDecoCanvas(ctx, area.right + 10, area.top + 40, true);
+    drawScaled(drawEasterDecoCanvas, area.left - 10 * scale, area.bottom - 40 * scale, false);
+    drawScaled(drawEasterDecoCanvas, area.right + 10 * scale, area.top + 40 * scale, true);
   }
 }
 
@@ -863,7 +875,7 @@ function drawGreenBalloons(ctx, cx, cy, size, flip = false) {
   ctx.restore();
 }
 
-function drawConfettiSparkles(ctx, width, height) {
+function drawConfettiSparkles(ctx, width, height, scale = 1) {
   ctx.save();
   const drawStarLocal = (cx, cy, spikes, outerRadius, innerRadius, color) => {
     let rot = Math.PI / 2 * 3;
@@ -891,16 +903,16 @@ function drawConfettiSparkles(ctx, width, height) {
   };
 
   const points = [
-    { x: width * 0.12, y: height * 0.4, r: 8, color: '#ffd700' },
-    { x: width * 0.85, y: height * 0.25, r: 10, color: '#ffffff' },
-    { x: width * 0.78, y: height * 0.75, r: 9, color: '#ffd700' },
-    { x: width * 0.2, y: height * 0.85, r: 7, color: '#ffd700' }
+    { x: width * 0.12, y: height * 0.4, r: 8 * scale, color: '#ffd700' },
+    { x: width * 0.85, y: height * 0.25, r: 10 * scale, color: '#ffffff' },
+    { x: width * 0.78, y: height * 0.75, r: 9 * scale, color: '#ffd700' },
+    { x: width * 0.2, y: height * 0.85, r: 7 * scale, color: '#ffd700' }
   ];
 
   points.forEach(pt => {
     ctx.save();
     ctx.shadowColor = 'rgba(255,215,0,0.4)';
-    ctx.shadowBlur = 6;
+    ctx.shadowBlur = 6 * scale;
     drawStarLocal(pt.x, pt.y, 5, pt.r, pt.r * 0.4, pt.color);
     ctx.restore();
   });
@@ -909,10 +921,10 @@ function drawConfettiSparkles(ctx, width, height) {
   for (let i = 0; i < 40; i++) {
     const rx = Math.random() * width;
     const ry = Math.random() * height;
-    if (rx < 80 || rx > width - 80 || ry < 80 || ry > height - 80) {
+    if (rx < 80 * scale || rx > width - 80 * scale || ry < 80 * scale || ry > height - 80 * scale) {
       ctx.globalAlpha = Math.random() * 0.6 + 0.3;
       ctx.beginPath();
-      ctx.arc(rx, ry, Math.random() * 4 + 1.5, 0, Math.PI * 2);
+      ctx.arc(rx, ry, (Math.random() * 4 + 1.5) * scale, 0, Math.PI * 2);
       ctx.fill();
     }
   }
@@ -1039,7 +1051,7 @@ function drawChristmasOrnamentsCanvas(ctx, cx, cy) {
   ctx.restore();
 }
 
-function drawSnowflakesCanvas(ctx, width, height) {
+function drawSnowflakesCanvas(ctx, width, height, scale = 1) {
   ctx.save();
   ctx.fillStyle = '#ffffff';
   ctx.strokeStyle = '#ffffff';
@@ -1047,7 +1059,7 @@ function drawSnowflakesCanvas(ctx, width, height) {
   const drawSnowflake = (sx, sy, size) => {
     ctx.save();
     ctx.strokeStyle = 'rgba(255,255,255,0.7)';
-    ctx.lineWidth = 1.5;
+    ctx.lineWidth = 1.5 * scale;
     ctx.beginPath();
     for (let d = 0; d < 4; d++) {
       const angle = (d * Math.PI) / 4;
@@ -1061,26 +1073,26 @@ function drawSnowflakesCanvas(ctx, width, height) {
       const vAngle1 = angle + Math.PI / 4;
       const vAngle2 = angle - Math.PI / 4;
       ctx.moveTo(sx + branchX, sy + branchY);
-      ctx.lineTo(sx + branchX + Math.cos(vAngle1)*6, sy + branchY + Math.sin(vAngle1)*6);
+      ctx.lineTo(sx + branchX + Math.cos(vAngle1)*6*scale, sy + branchY + Math.sin(vAngle1)*6*scale);
       ctx.moveTo(sx + branchX, sy + branchY);
-      ctx.lineTo(sx + branchX + Math.cos(vAngle2)*6, sy + branchY + Math.sin(vAngle2)*6);
+      ctx.lineTo(sx + branchX + Math.cos(vAngle2)*6*scale, sy + branchY + Math.sin(vAngle2)*6*scale);
     }
     ctx.stroke();
     ctx.restore();
   };
 
-  drawSnowflake(60, 160, 22);
-  drawSnowflake(width - 60, 260, 20);
-  drawSnowflake(60, height - 200, 18);
-  drawSnowflake(width - 60, height - 160, 22);
+  drawSnowflake(60 * scale, 160 * scale, 22 * scale);
+  drawSnowflake(width - 60 * scale, 260 * scale, 20 * scale);
+  drawSnowflake(60 * scale, height - 200 * scale, 18 * scale);
+  drawSnowflake(width - 60 * scale, height - 160 * scale, 22 * scale);
 
   for (let i = 0; i < 40; i++) {
     const rx = Math.random() * width;
     const ry = Math.random() * height;
-    if (rx < 80 || rx > width - 80 || ry < 80 || ry > height - 80) {
+    if (rx < 80 * scale || rx > width - 80 * scale || ry < 80 * scale || ry > height - 80 * scale) {
       ctx.globalAlpha = Math.random() * 0.5 + 0.4;
       ctx.beginPath();
-      ctx.arc(rx, ry, Math.random() * 4 + 2, 0, Math.PI * 2);
+      ctx.arc(rx, ry, (Math.random() * 4 + 2) * scale, 0, Math.PI * 2);
       ctx.fill();
     }
   }
@@ -1243,10 +1255,10 @@ function drawHalloweenPumpkinsCanvas(ctx, cx, cy) {
   ctx.restore();
 }
 
-function drawNoelBackgroundDetails(ctx, w, h) {
+function drawNoelBackgroundDetails(ctx, w, h, scale = 1) {
   ctx.save();
   ctx.fillStyle = '#ffd700';
-  ctx.font = '16px serif';
+  ctx.font = `${16 * scale}px serif`;
 
   ctx.globalAlpha = 0.4;
   ctx.fillText('🦌', w * 0.08, h * 0.3);
@@ -1256,13 +1268,13 @@ function drawNoelBackgroundDetails(ctx, w, h) {
   ctx.restore();
 }
 
-function drawHollyLeavesCornersCanvas(ctx, left, top, right, bottom) {
+function drawHollyLeavesCornersCanvas(ctx, left, top, right, bottom, scale = 1) {
   ctx.save();
   
   const drawHollyCorner = (x, y, flipX, flipY) => {
     ctx.save();
     ctx.translate(x, y);
-    ctx.scale(flipX ? -1 : 1, flipY ? -1 : 1);
+    ctx.scale(flipX ? -scale : scale, flipY ? -scale : scale);
 
     // Leaves
     ctx.fillStyle = '#1e3f20';
@@ -1297,10 +1309,10 @@ function drawHollyLeavesCornersCanvas(ctx, left, top, right, bottom) {
     ctx.restore();
   };
 
-  drawHollyCorner(left + 25, top + 25, false, false);
-  drawHollyCorner(right - 25, top + 25, true, false);
-  drawHollyCorner(left + 25, bottom - 25, false, true);
-  drawHollyCorner(right - 25, bottom - 25, true, true);
+  drawHollyCorner(left + 25 * scale, top + 25 * scale, false, false);
+  drawHollyCorner(right - 25 * scale, top + 25 * scale, true, false);
+  drawHollyCorner(left + 25 * scale, bottom - 25 * scale, false, true);
+  drawHollyCorner(right - 25 * scale, bottom - 25 * scale, true, true);
 
   ctx.restore();
 }
