@@ -29,6 +29,24 @@ app.use(express.static(path.join(__dirname, 'dist')));
 // In-memory database for the queue
 let queue = [];
 
+// Time-based rotating passcode for remote access security
+let currentPasscode = Math.floor(1000 + Math.random() * 9000).toString();
+let previousPasscode = '';
+
+function generatePasscode() {
+  return Math.floor(1000 + Math.random() * 9000).toString();
+}
+
+function rotatePasscode() {
+  previousPasscode = currentPasscode;
+  currentPasscode = generatePasscode();
+  io.to('kiosk_room').emit('passcode_updated', currentPasscode);
+  console.log(`[Security] Passcode rotated. Current: ${currentPasscode}, Previous: ${previousPasscode}`);
+}
+
+// Rotate passcode every 2 minutes (120,000 ms)
+setInterval(rotatePasscode, 120000);
+
 // Helper to get local network IP address
 function getLocalIp() {
   const interfaces = os.networkInterfaces();
@@ -53,7 +71,13 @@ app.get('/api/queue', (req, res) => {
 });
 
 app.post('/api/queue', (req, res) => {
-  const { name } = req.body;
+  const { name, code } = req.body;
+  
+  // Validate rotating passcode
+  if (!code || (code !== currentPasscode && code !== previousPasscode)) {
+    return res.status(401).json({ error: "Code d'accès invalide ou expiré. Veuillez rescanner le QR code sur la borne." });
+  }
+
   if (!name || name.trim() === '') {
     return res.status(400).json({ error: 'Prénom requis' });
   }
@@ -165,6 +189,13 @@ io.on('connection', (socket) => {
 
   socket.on('subscribe_queue', () => {
     socket.emit('queue_updated', getActiveQueue());
+  });
+
+  // Kiosk registration to receive rotating passcode updates securely
+  socket.on('register_kiosk', () => {
+    socket.join('kiosk_room');
+    socket.emit('passcode_updated', currentPasscode);
+    console.log('[Security] Kiosk connection registered to receive passcode events');
   });
 
   // Relay live low-resolution PC camera frames to the mobile remote

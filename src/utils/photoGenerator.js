@@ -303,6 +303,46 @@ export function generateFramedPhoto(videoElementOrPhotos, frame, customText, lay
       }
     }
 
+    // Preload image assets for the selected frame
+    const preloadedImages = {};
+    const assetsToLoad = [];
+    if (frame) {
+      if (frame.id === 'halloween-2026' || frame.category === 'Halloween') {
+        assetsToLoad.push({ key: 'pumpkin', src: '/assets/frames/halloween_pumpkin.png' });
+        assetsToLoad.push({ key: 'web', src: '/assets/frames/halloween_web.png' });
+      }
+      if (frame.id === 'noel-2026' || frame.category === 'Noël') {
+        assetsToLoad.push({ key: 'tree', src: '/assets/frames/christmas_tree.png' });
+        assetsToLoad.push({ key: 'holly', src: '/assets/frames/christmas_holly.png' });
+      }
+      if (frame.id === 'paques-2026' || frame.category === 'Pâques') {
+        assetsToLoad.push({ key: 'ears', src: '/assets/frames/easter_ears.png' });
+        assetsToLoad.push({ key: 'eggs', src: '/assets/frames/easter_eggs.png' });
+      }
+      if (frame.id === 'anniv-2026' || frame.category === 'Anniversaire') {
+        assetsToLoad.push({ key: 'balloons', src: '/assets/frames/birthday_balloons.png' });
+      }
+      if (frame.category === 'St-Patrick') {
+        assetsToLoad.push({ key: 'balloons', src: '/assets/frames/birthday_balloons.png' });
+        assetsToLoad.push({ key: 'coins', src: '/assets/frames/stpatrick_coins.png' });
+      }
+    }
+
+    await Promise.all(assetsToLoad.map(asset => {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.src = asset.src;
+        img.onload = () => {
+          preloadedImages[asset.key] = img;
+          resolve();
+        };
+        img.onerror = () => {
+          console.warn(`[photoGenerator] Failed to load asset: ${asset.src}`);
+          resolve();
+        };
+      });
+    }));
+
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
 
@@ -503,7 +543,7 @@ export function generateFramedPhoto(videoElementOrPhotos, frame, customText, lay
       bottom: photoBottom,
       width: photoWidth,
       height: photoHeight
-    });
+    }, preloadedImages);
 
     // 3. Draw Emoji Logo Header
     if (frame.emoji) {
@@ -570,7 +610,7 @@ export function generateFramedPhoto(videoElementOrPhotos, frame, customText, lay
 
 // Draw themed decorations on the Canvas
 // Draw themed decorations on the Canvas, aligned with the photo slots area
-function drawThemedDecorations(ctx, width, height, frame, photoArea) {
+function drawThemedDecorations(ctx, width, height, frame, photoArea, preloadedImages = {}) {
   const category = frame.category;
   const frameId = frame.id;
   const isGala = frameId?.startsWith('gala') || frameId?.startsWith('corpo') || frameId?.startsWith('mariage');
@@ -590,15 +630,6 @@ function drawThemedDecorations(ctx, width, height, frame, photoArea) {
     return grad;
   };
 
-  // Helper to draw custom elements with scale
-  const drawScaled = (drawFn, x, y, ...args) => {
-    ctx.save();
-    ctx.translate(x, y);
-    ctx.scale(scale, scale);
-    drawFn(ctx, 0, 0, ...args);
-    ctx.restore();
-  };
-
   if (frameId === 'halloween-2026') {
     ctx.save();
     ctx.strokeStyle = '#e05a00';
@@ -606,10 +637,12 @@ function drawThemedDecorations(ctx, width, height, frame, photoArea) {
     ctx.strokeRect(area.left - 4 * scale, area.top - 4 * scale, area.width + 8 * scale, area.height + 8 * scale);
     ctx.restore();
 
-    drawScaled(drawHalloweenWeb, area.left, area.top, 120, false);
-    drawScaled(drawHalloweenPumpkinsCanvas, area.right - 10 * scale, area.bottom - 10 * scale);
-    drawScaled(drawHalloweenBats, area.right - 5 * scale, area.top + area.height * 0.15);
-    drawScaled(drawHalloweenBats, area.left - 5 * scale, area.bottom - area.height * 0.30);
+    if (preloadedImages.web) {
+      ctx.drawImage(preloadedImages.web, area.left - 10 * scale, area.top - 10 * scale, 56 * scale, 56 * scale);
+    }
+    if (preloadedImages.pumpkin) {
+      ctx.drawImage(preloadedImages.pumpkin, area.right - 46 * scale, area.bottom - 46 * scale, 56 * scale, 56 * scale);
+    }
     return;
   }
 
@@ -620,9 +653,12 @@ function drawThemedDecorations(ctx, width, height, frame, photoArea) {
     ctx.strokeRect(area.left - 4 * scale, area.top - 4 * scale, area.width + 8 * scale, area.height + 8 * scale);
     ctx.restore();
 
-    drawNoelBackgroundDetails(ctx, width, height, scale);
-    drawHollyLeavesCornersCanvas(ctx, area.left, area.top, area.right, area.bottom, scale);
-    drawScaled(drawChristmasTreeCanvas, area.right - 20 * scale, area.top - 25 * scale);
+    if (preloadedImages.holly) {
+      ctx.drawImage(preloadedImages.holly, area.left - 8 * scale, area.top - 8 * scale, 56 * scale, 56 * scale);
+    }
+    if (preloadedImages.tree) {
+      ctx.drawImage(preloadedImages.tree, area.right - 40 * scale, area.top - 20 * scale, 48 * scale, 56 * scale);
+    }
     return;
   }
 
@@ -633,9 +669,12 @@ function drawThemedDecorations(ctx, width, height, frame, photoArea) {
     ctx.strokeRect(area.left - 4 * scale, area.top - 4 * scale, area.width + 8 * scale, area.height + 8 * scale);
     ctx.restore();
 
-    drawScaled(drawBunnyEarsCanvas, area.left + area.width / 2, area.top - 25 * scale);
-    drawScaled(drawEasterEggsCanvas, area.left - 10 * scale, area.bottom - 10 * scale);
-    drawScaled(drawEasterBunnyCanvas, area.right - 10 * scale, area.bottom - 10 * scale);
+    if (preloadedImages.ears) {
+      ctx.drawImage(preloadedImages.ears, area.left + area.width / 2 - 28 * scale, area.top - 25 * scale, 56 * scale, 56 * scale);
+    }
+    if (preloadedImages.eggs) {
+      ctx.drawImage(preloadedImages.eggs, area.left - 10 * scale, area.bottom - 10 * scale, 56 * scale, 56 * scale);
+    }
     return;
   }
 
@@ -646,11 +685,14 @@ function drawThemedDecorations(ctx, width, height, frame, photoArea) {
     ctx.strokeRect(area.left - 4 * scale, area.top - 4 * scale, area.width + 8 * scale, area.height + 8 * scale);
     ctx.restore();
 
-    drawScaled(drawPartyHatCanvas, area.left - 10 * scale, area.top - 15 * scale, false);
-    drawScaled(drawPartyHatCanvas, area.right - 10 * scale, area.top - 15 * scale, true);
-    drawScaled(drawAnnivBalloonsCanvas, area.left - 15 * scale, area.bottom - 15 * scale, false);
-    drawScaled(drawAnnivBalloonsCanvas, area.right - 15 * scale, area.bottom - 15 * scale, true);
-    drawScaled(drawCupcakeCanvas, area.right - 8 * scale, area.bottom - 8 * scale);
+    if (preloadedImages.balloons) {
+      ctx.drawImage(preloadedImages.balloons, area.left - 15 * scale, area.bottom - 15 * scale, 48 * scale, 64 * scale);
+      ctx.save();
+      ctx.translate(area.right + 15 * scale, area.bottom - 15 * scale);
+      ctx.scale(-1, 1);
+      ctx.drawImage(preloadedImages.balloons, 0, 0, 48 * scale, 64 * scale);
+      ctx.restore();
+    }
     return;
   }
 
@@ -669,12 +711,14 @@ function drawThemedDecorations(ctx, width, height, frame, photoArea) {
     ctx.strokeRect(area.left + 4 * scale, area.top + 4 * scale, area.width - 8 * scale, area.height - 8 * scale);
     ctx.restore();
 
-    // Draw gold balloons left and right
-    drawScaled(drawGoldBalloons, area.left - 12 * scale, area.top + area.height * 0.18, 45, false);
-    drawScaled(drawGoldBalloons, area.right - 12 * scale, area.top + area.height * 0.45, 45, true);
-
-    // Draw confetti sparkles
-    drawConfettiSparkles(ctx, width, height, scale);
+    if (preloadedImages.balloons) {
+      ctx.drawImage(preloadedImages.balloons, area.left - 12 * scale, area.top + area.height * 0.18, 48 * scale, 64 * scale);
+      ctx.save();
+      ctx.translate(area.right + 12 * scale, area.top + area.height * 0.45);
+      ctx.scale(-1, 1);
+      ctx.drawImage(preloadedImages.balloons, 0, 0, 48 * scale, 64 * scale);
+      ctx.restore();
+    }
   }
 
   else if (category === 'Halloween') {
@@ -693,9 +737,12 @@ function drawThemedDecorations(ctx, width, height, frame, photoArea) {
     ctx.strokeRect(area.left + 4 * scale, area.top + 4 * scale, area.width - 8 * scale, area.height - 8 * scale);
     ctx.restore();
 
-    drawScaled(drawHalloweenWeb, area.left, area.top, 120, false);
-    drawScaled(drawHalloweenWeb, area.right, area.top, 120, true);
-    drawScaled(drawHalloweenBats, area.right - 30 * scale, area.top + 80 * scale);
+    if (preloadedImages.web) {
+      ctx.drawImage(preloadedImages.web, area.left - 10 * scale, area.top - 10 * scale, 56 * scale, 56 * scale);
+    }
+    if (preloadedImages.pumpkin) {
+      ctx.drawImage(preloadedImages.pumpkin, area.right - 46 * scale, area.bottom - 46 * scale, 56 * scale, 56 * scale);
+    }
   }
 
   else if (category === 'Noël') {
@@ -714,8 +761,12 @@ function drawThemedDecorations(ctx, width, height, frame, photoArea) {
     ctx.strokeRect(area.left + 4 * scale, area.top + 4 * scale, area.width - 8 * scale, area.height - 8 * scale);
     ctx.restore();
 
-    drawScaled(drawChristmasOrnamentsCanvas, area.right - 30 * scale, area.top);
-    drawSnowflakesCanvas(ctx, width, height, scale);
+    if (preloadedImages.holly) {
+      ctx.drawImage(preloadedImages.holly, area.left - 10 * scale, area.top - 10 * scale, 56 * scale, 56 * scale);
+    }
+    if (preloadedImages.tree) {
+      ctx.drawImage(preloadedImages.tree, area.right - 10 * scale, area.top - 20 * scale, 48 * scale, 56 * scale);
+    }
   }
 
   else if (category === 'St-Patrick') {
@@ -734,9 +785,17 @@ function drawThemedDecorations(ctx, width, height, frame, photoArea) {
     ctx.strokeRect(area.left + 4 * scale, area.top + 4 * scale, area.width - 8 * scale, area.height - 8 * scale);
     ctx.restore();
 
-    drawScaled(drawGreenBalloons, area.left - 12 * scale, area.top + area.height * 0.18, 45, false);
-    drawScaled(drawGreenBalloons, area.right - 12 * scale, area.top + area.height * 0.45, 45, true);
-    drawScaled(drawStPatrickCoinsCanvas, area.right - 40 * scale, area.bottom - 40 * scale);
+    if (preloadedImages.balloons) {
+      ctx.drawImage(preloadedImages.balloons, area.left - 12 * scale, area.top + area.height * 0.18, 48 * scale, 64 * scale);
+      ctx.save();
+      ctx.translate(area.right + 12 * scale, area.top + area.height * 0.45);
+      ctx.scale(-1, 1);
+      ctx.drawImage(preloadedImages.balloons, 0, 0, 48 * scale, 64 * scale);
+      ctx.restore();
+    }
+    if (preloadedImages.coins) {
+      ctx.drawImage(preloadedImages.coins, area.right - 56 * scale, area.bottom - 56 * scale, 56 * scale, 56 * scale);
+    }
   }
 
   else if (category === 'Pâques') {
@@ -755,8 +814,12 @@ function drawThemedDecorations(ctx, width, height, frame, photoArea) {
     ctx.strokeRect(area.left + 4 * scale, area.top + 4 * scale, area.width - 8 * scale, area.height - 8 * scale);
     ctx.restore();
 
-    drawScaled(drawEasterDecoCanvas, area.left - 10 * scale, area.bottom - 40 * scale, false);
-    drawScaled(drawEasterDecoCanvas, area.right + 10 * scale, area.top + 40 * scale, true);
+    if (preloadedImages.ears) {
+      ctx.drawImage(preloadedImages.ears, area.left + area.width / 2 - 28 * scale, area.top - 20 * scale, 56 * scale, 56 * scale);
+    }
+    if (preloadedImages.eggs) {
+      ctx.drawImage(preloadedImages.eggs, area.left - 10 * scale, area.bottom - 10 * scale, 56 * scale, 56 * scale);
+    }
   }
 }
 

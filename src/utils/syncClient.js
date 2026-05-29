@@ -42,11 +42,14 @@ export const kt = {
             },
             body: JSON.stringify(data),
           });
-          if (!res.ok) throw new Error('Failed to create queue entry');
+          if (!res.ok) {
+            const errData = await res.json().catch(() => ({}));
+            return { error: errData.error || 'Failed to create queue entry' };
+          }
           return await res.json();
         } catch (err) {
           console.error('Error creating queue entry:', err);
-          return null;
+          return { error: err.message || 'Failed to create queue entry' };
         }
       },
 

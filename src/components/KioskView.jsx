@@ -10,6 +10,7 @@ export default function KioskView() {
   const [queue, setQueue] = useState([]);
   const [localIp, setLocalIp] = useState('');
   const [capturedPhotos, setCapturedPhotos] = useState([]);
+  const [passcode, setPasscode] = useState('');
   
   // Kiosk PC webcam stream states
   const [kioskStream, setKioskStream] = useState(null);
@@ -72,13 +73,28 @@ export default function KioskView() {
       .catch(err => console.error('Error fetching local IP:', err));
   }, []);
 
-  // Setup Socket.io subscription
+  // Setup Socket.io subscription and passcode updates
   useEffect(() => {
     fetchQueue();
+    
+    // Register kiosk to receive passcode updates and join the kiosk room
+    socket.emit('register_kiosk');
+    
+    const handlePasscodeUpdated = (newPasscode) => {
+      setPasscode(newPasscode);
+      console.log('[KioskView] Rotating passcode updated:', newPasscode);
+    };
+    
+    socket.on('passcode_updated', handlePasscodeUpdated);
+    
     const unsubscribe = kt.entities.QueueEntry.subscribe((updatedQueue) => {
       setQueue(updatedQueue.filter(entry => entry.status !== 'done'));
     });
-    return () => unsubscribe();
+    
+    return () => {
+      unsubscribe();
+      socket.off('passcode_updated', handlePasscodeUpdated);
+    };
   }, [fetchQueue]);
 
   // Extract current active entry in the queue
@@ -327,9 +343,11 @@ export default function KioskView() {
 
   // Construct join URL (use local IP only if accessed via localhost/127.0.0.1, otherwise use current window origin)
   const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-  const joinUrl = (isLocalhost && localIp)
+  const baseUrl = (isLocalhost && localIp)
     ? `https://${localIp}:8443/join`
     : `${window.location.origin}/join`;
+  
+  const joinUrl = passcode ? `${baseUrl}?code=${passcode}` : baseUrl;
   
   const qrCodeApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=${encodeURIComponent(joinUrl)}&bgcolor=ffffff&color=0f172a&margin=1`;
 
@@ -397,7 +415,7 @@ export default function KioskView() {
                 </div>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-3 flex flex-col items-center">
                 <div className="flex items-center gap-2 justify-center text-primary">
                   <ScanLine className="w-5 h-5 animate-pulse" />
                   <span className="font-heading font-bold text-xl">Scannez pour commencer</span>
@@ -405,6 +423,16 @@ export default function KioskView() {
                 <p className="text-muted-foreground text-sm max-w-xs leading-relaxed">
                   Connectez votre smartphone pour rejoindre la file et personnaliser vos photos.
                 </p>
+                {passcode && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 border border-primary/20 rounded-xl text-primary font-heading font-bold text-sm tracking-wide shadow-sm"
+                  >
+                    <span>Code d'accès :</span>
+                    <span className="font-mono text-base tracking-widest bg-primary/20 px-2 py-0.5 rounded-lg select-text">{passcode}</span>
+                  </motion.div>
+                )}
               </div>
             </motion.div>
           ) : (

@@ -344,10 +344,8 @@ export function FrameDecorations({ category, frameId }) {
     return (
       <div className="absolute inset-0 pointer-events-none z-25">
         <div className="absolute inset-[-4px] border-[2px] border-[#e05a00] rounded-lg opacity-90" />
-        <HalloweenSpiders className="absolute top-[-10px] left-[-10px] w-14 h-14" />
-        <HalloweenBats className="absolute top-[15%] right-[-5px] w-10 h-8" />
-        <HalloweenBats className="absolute bottom-[30%] left-[-5px] w-7 h-5 opacity-70" />
-        <HalloweenPumpkins className="absolute bottom-[-10px] right-[-10px] w-[60px] h-[40px] z-30" />
+        <img src="/assets/frames/halloween_web.png" className="absolute top-[-10px] left-[-10px] w-14 h-14 object-contain" />
+        <img src="/assets/frames/halloween_pumpkin.png" className="absolute bottom-[-10px] right-[-10px] w-14 h-14 z-30 object-contain" />
       </div>
     );
   }
@@ -356,15 +354,8 @@ export function FrameDecorations({ category, frameId }) {
     return (
       <div className="absolute inset-0 pointer-events-none z-25">
         <div className="absolute inset-[-4px] border-[2px] border-[#ffd700]/30 rounded-lg opacity-80" />
-        {/* Floating gold reindeer and snowflakes on background */}
-        <span className="absolute top-[30%] left-[-20px] text-[8px] text-[#ffd700] opacity-50">🦌</span>
-        <span className="absolute top-[50%] right-[-20px] text-[8px] text-[#ffd700] opacity-50">🦌</span>
-        
-        {/* Holly corners on the inner photo frames */}
-        <HollyLeavesCorners className="absolute inset-0 w-full h-full z-20 opacity-90" />
-        
-        {/* Christmas Tree top right */}
-        <ChristmasTreeSVG className="absolute top-[-25px] right-[-20px] w-[45px] h-[55px] z-30" />
+        <img src="/assets/frames/christmas_holly.png" className="absolute top-[-8px] left-[-8px] w-14 h-14 object-contain z-20" />
+        <img src="/assets/frames/christmas_tree.png" className="absolute top-[-25px] right-[-12px] w-12 h-14 z-30 object-contain" />
       </div>
     );
   }
@@ -373,12 +364,8 @@ export function FrameDecorations({ category, frameId }) {
     return (
       <div className="absolute inset-0 pointer-events-none z-25">
         <div className="absolute inset-[-4px] border-[2px] border-[#80b3ff]/30 rounded-lg opacity-70" />
-        {/* Bunny ears peaking behind photo frame */}
-        <BunnyEarsSVG className="absolute top-[-25px] left-1/2 transform -translate-x-1/2 w-14 h-10 z-0" />
-        {/* Easter eggs bottom left */}
-        <EasterEggsSVG className="absolute bottom-[-10px] left-[-10px] w-14 h-10 z-30" />
-        {/* Cute Easter bunny bottom right */}
-        <EasterBunnySVG className="absolute bottom-[-10px] right-[-10px] w-12 h-14 z-30" />
+        <img src="/assets/frames/easter_ears.png" className="absolute top-[-25px] left-1/2 transform -translate-x-1/2 w-14 h-14 object-contain z-0" />
+        <img src="/assets/frames/easter_eggs.png" className="absolute bottom-[-10px] left-[-10px] w-14 h-14 z-30 object-contain" />
       </div>
     );
   }
@@ -387,16 +374,8 @@ export function FrameDecorations({ category, frameId }) {
     return (
       <div className="absolute inset-0 pointer-events-none z-25">
         <div className="absolute inset-[-4px] border-[2px] border-[#ffea00]/30 rounded-lg opacity-70" />
-        {/* Party hats top corners */}
-        <PartyHatSVG className="absolute top-[-15px] left-[-10px] w-8 h-10" />
-        <PartyHatSVG className="absolute top-[-15px] right-[-10px] w-8 h-10 transform scale-x-[-1]" />
-        
-        {/* Balloons bottom corners */}
-        <AnnivBalloons className="absolute bottom-[-15px] left-[-15px] w-12 h-16 z-30" />
-        <AnnivBalloons className="absolute bottom-[-15px] right-[-15px] w-12 h-16 z-30 transform scale-x-[-1]" />
-        
-        {/* Cupcake bottom right */}
-        <CupcakeCandle className="absolute bottom-[-8px] right-[-8px] w-9 h-11 z-35" />
+        <img src="/assets/frames/birthday_balloons.png" className="absolute bottom-[-15px] left-[-15px] w-12 h-16 z-30 object-contain" />
+        <img src="/assets/frames/birthday_balloons.png" className="absolute bottom-[-15px] right-[-15px] w-12 h-16 z-30 transform scale-x-[-1] object-contain" />
       </div>
     );
   }
@@ -410,9 +389,8 @@ export function FrameDecorations({ category, frameId }) {
         <>
           <div className="absolute inset-1.5 border-[3px] rounded-xl opacity-90" style={{ borderImage: 'linear-gradient(135deg, #bf953f 0%, #fcf6ba 30%, #b38728 50%, #fbf5b7 70%, #aa771c 100%) 1', borderRadius: '12px' }} />
           <div className="absolute inset-3 border border-dashed border-[#ffd700]/40 rounded-lg" />
-          <GoldBalloons className="absolute left-[-12px] top-[18%] w-[55px] h-[65px] filter drop-shadow" />
-          <GoldBalloons className="absolute right-[-12px] top-[45%] w-[55px] h-[65px] filter drop-shadow transform scale-x-[-1]" />
-          <GoldConfetti className="absolute inset-0" />
+          <img src="/assets/frames/birthday_balloons.png" className="absolute left-[-12px] top-[18%] w-12 h-16 z-30 object-contain" />
+          <img src="/assets/frames/birthday_balloons.png" className="absolute right-[-12px] top-[45%] w-12 h-16 z-30 transform scale-x-[-1] object-contain" />
         </>
       )}
 
@@ -420,8 +398,8 @@ export function FrameDecorations({ category, frameId }) {
         <>
           <div className="absolute inset-1.5 border-[3px] rounded-xl opacity-85" style={{ borderImage: 'linear-gradient(135deg, #ff8c00 0%, #7b2cbf 50%, #ff8c00 100%) 1', borderRadius: '12px' }} />
           <div className="absolute inset-3 border border-dashed border-[#7b2cbf]/40 rounded-lg" />
-          <HalloweenSpiders className="absolute top-1 left-1 w-12 h-12" />
-          <HalloweenBats className="absolute top-[35%] right-1 w-10 h-8" />
+          <img src="/assets/frames/halloween_web.png" className="absolute top-[-10px] left-[-10px] w-14 h-14 object-contain" />
+          <img src="/assets/frames/halloween_pumpkin.png" className="absolute bottom-[-10px] right-[-10px] w-14 h-14 z-30 object-contain" />
         </>
       )}
 
@@ -429,8 +407,8 @@ export function FrameDecorations({ category, frameId }) {
         <>
           <div className="absolute inset-1.5 border-[3px] rounded-xl opacity-90" style={{ borderImage: 'linear-gradient(135deg, #cc0000 0%, #006400 50%, #cc0000 100%) 1', borderRadius: '12px' }} />
           <div className="absolute inset-3 border border-dashed border-[#ffea00]/30 rounded-lg" />
-          <ChristmasOrnaments className="absolute top-1 right-1 w-[55px] h-[45px]" />
-          <SnowflakesBackground className="absolute inset-0" />
+          <img src="/assets/frames/christmas_holly.png" className="absolute top-[-10px] left-[-10px] w-14 h-14 object-contain z-20" />
+          <img src="/assets/frames/christmas_tree.png" className="absolute top-[-20px] right-[-10px] w-12 h-14 z-30 object-contain" />
         </>
       )}
 
@@ -438,9 +416,9 @@ export function FrameDecorations({ category, frameId }) {
         <>
           <div className="absolute inset-1.5 border-[3px] rounded-xl opacity-90" style={{ borderImage: 'linear-gradient(135deg, #008000 0%, #ffd700 50%, #004d00 100%) 1', borderRadius: '12px' }} />
           <div className="absolute inset-3 border border-dashed border-[#ffd700]/40 rounded-lg" />
-          <GreenBalloons className="absolute left-[-12px] top-[18%] w-[55px] h-[65px] filter drop-shadow" />
-          <GreenBalloons className="absolute right-[-12px] top-[45%] w-[55px] h-[65px] filter drop-shadow transform scale-x-[-1]" />
-          <StPatrickCoins className="absolute bottom-1 right-1 w-14 h-14" />
+          <img src="/assets/frames/birthday_balloons.png" className="absolute left-[-12px] top-[18%] w-12 h-16 z-30 object-contain filter hue-rotate-[60deg] saturate-[1.5]" />
+          <img src="/assets/frames/birthday_balloons.png" className="absolute right-[-12px] top-[45%] w-12 h-16 z-30 transform scale-x-[-1] object-contain filter hue-rotate-[60deg] saturate-[1.5]" />
+          <img src="/assets/frames/stpatrick_coins.png" className="absolute bottom-[-10px] right-[-10px] w-14 h-14 z-30 object-contain" />
         </>
       )}
 
@@ -448,8 +426,8 @@ export function FrameDecorations({ category, frameId }) {
         <>
           <div className="absolute inset-1.5 border-[3px] rounded-xl opacity-90" style={{ borderImage: 'linear-gradient(135deg, #ffd166 0%, #ffb7b2 50%, #ffc6ff 100%) 1', borderRadius: '12px' }} />
           <div className="absolute inset-3 border border-dashed border-white/40 rounded-lg" />
-          <EasterDeco className="absolute bottom-1 left-[1px] w-12 h-12" />
-          <EasterDeco className="absolute top-1 right-[1px] w-12 h-12 transform scale-y-[-1] scale-x-[-1]" />
+          <img src="/assets/frames/easter_ears.png" className="absolute top-[-20px] left-1/2 transform -translate-x-1/2 w-14 h-14 object-contain z-0" />
+          <img src="/assets/frames/easter_eggs.png" className="absolute bottom-[-10px] left-[-10px] w-12 h-12 z-30 object-contain" />
         </>
       )}
     </div>

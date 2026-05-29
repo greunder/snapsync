@@ -13,6 +13,10 @@ export default function MobileView() {
   const [queueEntry, setQueueEntry] = useState(null);
   const [position, setPosition] = useState(0);
   const [joining, setJoining] = useState(false);
+  const [joinError, setJoinError] = useState('');
+  const [initialCode, setInitialCode] = useState(() => {
+    return new URLSearchParams(window.location.search).get('code') || '';
+  });
   
   // Custom camera selection and stream states
   const [cameraSource, setCameraSource] = useState('mobile'); // 'mobile' | 'kiosk'
@@ -176,11 +180,16 @@ export default function MobileView() {
   }, [mobileStream]);
 
   // Handle joining the queue
-  const handleJoin = async (name) => {
+  const handleJoin = async (name, code) => {
     setJoining(true);
+    setJoinError('');
     try {
-      const entry = await kt.entities.QueueEntry.create({ name });
-      if (entry) {
+      const entry = await kt.entities.QueueEntry.create({ name, code });
+      if (entry && entry.error) {
+        setJoinError(entry.error);
+        return;
+      }
+      if (entry && entry.id) {
         localStorage.setItem('snapsync_session_entry_id', entry.id);
         const list = await kt.entities.QueueEntry.list();
         if (list) {
@@ -188,9 +197,12 @@ export default function MobileView() {
           const currentEntry = activeList.find(e => e.id === entry.id) || entry;
           initializeSessionState(currentEntry, activeList);
         }
+      } else {
+        setJoinError("Impossible de rejoindre la file d'attente. Réessayez.");
       }
     } catch (err) {
       console.error('Error joining queue:', err);
+      setJoinError("Erreur de connexion avec le serveur.");
     } finally {
       setJoining(false);
     }
@@ -286,7 +298,13 @@ export default function MobileView() {
       <div className="relative z-10">
         <AnimatePresence mode="wait">
           {status === 'join' && (
-            <MobileJoinForm key="join" onJoin={handleJoin} isLoading={joining} />
+            <MobileJoinForm 
+              key="join" 
+              onJoin={handleJoin} 
+              isLoading={joining} 
+              error={joinError}
+              initialCode={initialCode}
+            />
           )}
           
           {status === 'waiting' && (
